@@ -60,19 +60,23 @@ async function getBestAvailablePlayers() {
 						response?.fantasy_content?.users?.user?.games?.game?.leagues?.league
 							?.players?.player
 
-					if (player) {
+					if (
+						player &&
+						ranking.Team.toLowerCase() ===
+							player.editorial_team_abbr.toLowerCase()
+					) {
 						results.push(playerFactory(player))
 					}
 
 					if (rankingIndex !== 0 && rankingIndex % 10 === 0) {
 						console.log(
-							`Found ${results.length} from ${rankingIndex} players so far`
+							`Found ${results.length} players. Searched ${rankingIndex} so far`
 						)
 					}
 
 					if (results.length >= 10) {
 						console.log(
-							`${results.length} players found from ${rankingIndex}. Clearing queue.`
+							`${results.length} players found from searching through ${rankingIndex}. Clearing queue.`
 						)
 						limit.clearQueue()
 						resolve()

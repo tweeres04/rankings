@@ -44,6 +44,8 @@ export async function getAccessToken() {
 
 				writeFile(tokenFile, JSON.stringify({ access_token, refresh_token }))
 
+				rl.close()
+
 				resolve({ access_token, refresh_token })
 			})
 		})
