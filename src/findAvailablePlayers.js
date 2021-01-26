@@ -12,11 +12,13 @@ import { getAccessToken, refreshTheToken } from './auth.js'
 
 const minListSize = 50
 
-function playerFactory(playerData) {
+function playerFactory(playerData, rankingData) {
 	return {
 		name: playerData.name.full,
 		position: playerData.display_position,
 		team: playerData.editorial_team_abbr,
+		projectedRank: _.toNumber(rankingData.Rank),
+		projectedPoints: _.toNumber(rankingData.Points),
 	}
 }
 
@@ -78,7 +80,14 @@ async function getBestAvailablePlayers() {
 
 					players = players
 						.filter((p) => !p.ownership.owner_team_key)
-						.map(playerFactory)
+						.map((p) => {
+							const rankingData = rankingChunk.find(
+								(r) =>
+									p.name.full === r.Player &&
+									p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
+							)
+							return playerFactory(p, rankingData)
+						})
 
 					results.push(...players)
 
