@@ -1,8 +1,8 @@
 import readline from 'readline'
-import { exec } from 'child_process'
 import { URLSearchParams } from 'url'
 import { writeFile, readFile } from 'fs/promises'
 import axios from 'axios'
+import open from 'open'
 
 const tokenFile = 'data/token'
 
@@ -11,8 +11,8 @@ export async function getAccessToken() {
 		const data = await readFile(tokenFile, { encoding: 'utf8' })
 		return JSON.parse(data)
 	} catch (err) {
-		exec(
-			`open 'https://api.login.yahoo.com/oauth2/request_auth?client_id=${process.env.YAHOO_CLIENT_ID}&redirect_uri=oob&response_type=code'`
+		await open(
+			`https://api.login.yahoo.com/oauth2/request_auth?client_id=${process.env.YAHOO_CLIENT_ID}&redirect_uri=oob&response_type=code`
 		)
 
 		const rl = readline.createInterface({
