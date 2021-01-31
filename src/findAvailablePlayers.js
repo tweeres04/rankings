@@ -16,7 +16,7 @@ function playerFactory(playerData, rankingData) {
 	return {
 		name: playerData.name.full,
 		position: playerData.display_position,
-		team: playerData.editorial_team_abbr,
+		team: playerData.editorial_team_abbr.toUpperCase(),
 		projectedRank: _.toNumber(rankingData.Rank),
 		projectedPoints: _.toNumber(rankingData.Points),
 	}
@@ -119,12 +119,10 @@ async function getBestAvailablePlayers() {
 
 async function main() {
 	try {
-		const start = Date.now()
 		console.log(`Fetching the ${minListSize} best available players...`)
 		const results = await getBestAvailablePlayers()
 
 		console.table(results)
-		console.log(`Done in ${((Date.now() - start) / 1000).toFixed(2)} s`)
 	} catch (err) {
 		let error
 		try {

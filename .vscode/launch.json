@@ -4,8 +4,6 @@
 	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
-
-
 		{
 			"type": "pwa-node",
 			"request": "launch",
@@ -19,11 +17,21 @@
 		{
 			"type": "pwa-node",
 			"request": "launch",
-			"name": "Get Players",
+			"name": "Make player database",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
 			"program": "${workspaceFolder}/src/getPlayers.js",
+			"console": "externalTerminal"
+		},
+		{
+			"type": "pwa-node",
+			"request": "launch",
+			"name": "Get My Team",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"program": "${workspaceFolder}/src/getMyTeam.js",
 			"console": "externalTerminal"
 		}
 	]

@@ -18,6 +18,7 @@
 	},
 	"scripts": {
 		"start": "node src/findAvailablePlayers.js",
+		"myteam": "node src/getMyTeam.js",
 		"seed": "node src/getPlayers.js"
 	}
 }
