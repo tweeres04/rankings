@@ -41,9 +41,16 @@ export default function App() {
 			<table className="table">
 				<thead>
 					<tr>
-						{headers.map((key) => (
-							<th key={key}>{key}</th>
-						))}
+						{headers.map((key) => {
+							const cellClass = clsx({
+								'text-end': key === 'Points',
+							})
+							return (
+								<th key={key} class={cellClass}>
+									{key}
+								</th>
+							)
+						})}
 						<th style={{ width: 150 }}></th>
 					</tr>
 				</thead>
@@ -61,16 +68,21 @@ export default function App() {
 						})
 						return (
 							<tr key={playerKey(ranking)} className={rowClass}>
-								{headers.map((header) => (
-									<td key={header}>
-										{isCrossedOff ? (
-											<s>{ranking[header]}</s>
-										) : (
-											ranking[header]
-										)}
-									</td>
-								))}
-								<td>
+								{headers.map((header) => {
+									const cellClass = clsx({
+										'text-end': header === 'Points',
+									})
+									return (
+										<td key={header} className={cellClass}>
+											{isCrossedOff ? (
+												<s>{ranking[header]}</s>
+											) : (
+												ranking[header]
+											)}
+										</td>
+									)
+								})}
+								<td className="text-end">
 									<button
 										className="btn btn-primary"
 										onClick={() => {
