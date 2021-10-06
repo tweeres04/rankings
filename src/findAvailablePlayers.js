@@ -10,7 +10,7 @@ dotenv.config()
 
 import { getAccessToken, refreshTheToken } from './auth.js'
 
-const minListSize = 50
+const minListSize = 20
 
 function playerFactory(playerData, rankingData) {
 	return {
