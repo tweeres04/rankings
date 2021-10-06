@@ -26,23 +26,19 @@ export default function Filters({
 				</select>
 			</div>
 			<div className="col-auto">
-				<div className="form-check">
-					<input
-						type="checkbox"
-						className="form-check-input"
-						checked={filters.hideCrossedOff || false}
-						id="crossedOffCheck"
-						onChange={(event) => {
-							setFilter('hideCrossedOff', event.target.checked)
-						}}
-					/>
-					<label
-						htmlFor="crossedOffCheck"
-						className="form-check-label"
-					>
-						Hide crossed off
-					</label>
-				</div>
+				<select
+					name="crossedOff"
+					id="crossedOff"
+					className="form-select"
+					value={filters.crossedOff || ''}
+					onChange={(event) => {
+						setFilter('crossedOff', event.target.value)
+					}}
+				>
+					<option value="">All players</option>
+					<option value="notCrossedOff">Not crossed off</option>
+					<option value="crossedOff">Crossed off only</option>
+				</select>
 			</div>
 			<div className="col">
 				<button

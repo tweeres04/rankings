@@ -56,18 +56,22 @@ export default function App() {
 				</thead>
 				<tbody>
 					{rankings.map((ranking) => {
+						const key = playerKey(ranking)
 						let isFilteredOut =
 							(filters.position &&
 								ranking.Pos !== filters.position) ||
-							(filters.hideCrossedOff &&
-								crossedOff[playerKey(ranking)])
-						const isCrossedOff = crossedOff[playerKey(ranking)]
+							(filters.crossedOff &&
+								filters.crossedOff === 'crossedOff' &&
+								!crossedOff[key]) ||
+							(filters.crossedOff === 'notCrossedOff' &&
+								crossedOff[key])
+						const isCrossedOff = crossedOff[key]
 						const rowClass = clsx({
 							'table-secondary': isCrossedOff,
 							'd-none': isFilteredOut,
 						})
 						return (
-							<tr key={playerKey(ranking)} className={rowClass}>
+							<tr key={key} className={rowClass}>
 								{headers.map((header) => {
 									const cellClass = clsx({
 										'text-end': header === 'Points',
