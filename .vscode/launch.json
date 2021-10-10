@@ -8,9 +8,7 @@
 			"type": "pwa-node",
 			"request": "launch",
 			"name": "Find Available Players",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
+			"skipFiles": ["<node_internals>/**"],
 			"program": "${workspaceFolder}/src/findAvailablePlayers.js",
 			"console": "externalTerminal"
 		},
@@ -18,9 +16,7 @@
 			"type": "pwa-node",
 			"request": "launch",
 			"name": "Make player database",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
+			"skipFiles": ["<node_internals>/**"],
 			"program": "${workspaceFolder}/src/getPlayers.js",
 			"console": "externalTerminal"
 		},
@@ -28,11 +24,8 @@
 			"type": "pwa-node",
 			"request": "launch",
 			"name": "Get My Team",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
-			"program": "${workspaceFolder}/src/getMyTeam.js",
-			"console": "externalTerminal"
+			"skipFiles": ["<node_internals>/**"],
+			"program": "${workspaceFolder}/src/getMyTeam.js"
 		}
 	]
 }

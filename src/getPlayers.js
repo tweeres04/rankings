@@ -37,7 +37,7 @@ async function getPlayers(page = 0, pageSize = 25) {
 		})
 
 		let players =
-			response?.fantasy_content?.users?.user?.games?.game?.leagues?.league
+			response?.fantasy_content?.users?.user?.games?.game?.leagues?.league[0]
 				?.players?.player
 
 		players = players.map(playerFactory)
@@ -46,6 +46,7 @@ async function getPlayers(page = 0, pageSize = 25) {
 			? players
 			: [...players, ...(await getPlayers(page + 1))]
 	} catch (err) {
+		console.error(err)
 		if (err.response.status === 401) {
 			await refreshTheToken()
 			return getPlayers()

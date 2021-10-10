@@ -48,13 +48,13 @@ async function theQuery() {
 
 async function getBestAvailablePlayers() {
 	const rankingsCsv = await readFile('data/rankings.csv', 'utf8')
-	const rankings = parse(rankingsCsv, { columns: true })
+	const rankings = parse(rankingsCsv, { columns: true, bom: true })
 
 	try {
 		const response = await theQuery()
 		let players =
-			response?.fantasy_content?.users?.user?.games?.game?.leagues?.league
-				?.teams?.team?.players?.player
+			response?.fantasy_content?.users?.user?.games?.game?.leagues
+				?.league[0]?.teams?.team?.players?.player
 
 		players = players.map((p) => {
 			const rankingData = rankings.find(
@@ -62,6 +62,7 @@ async function getBestAvailablePlayers() {
 					p.name.full === r.Player &&
 					p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
 			)
+
 			return playerFactory(p, rankingData)
 		})
 

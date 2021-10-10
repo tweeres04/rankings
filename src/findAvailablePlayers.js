@@ -53,7 +53,7 @@ async function theQuery(playerKeys) {
 async function getBestAvailablePlayers() {
 	const results = []
 	const rankingsCsv = await readFile('data/rankings.csv', 'utf8')
-	const rankings = parse(rankingsCsv, { columns: true })
+	const rankings = parse(rankingsCsv, { columns: true, bom: true })
 	const playerData = JSON.parse(await readFile('data/players.json', 'utf8'))
 	const limit = pLimit(1)
 
@@ -69,14 +69,15 @@ async function getBestAvailablePlayers() {
 								playerData.find(
 									(pd) =>
 										pd.name === r.Player &&
-										pd.team.toLowerCase() === r.Team.toLowerCase()
+										pd.team.toLowerCase() ===
+											r.Team.toLowerCase()
 								)?.key
 						)
 						.filter(Boolean)
 					const response = await theQuery(playerKeys)
 					let players =
-						response?.fantasy_content?.users?.user?.games?.game?.leagues?.league
-							?.players?.player
+						response?.fantasy_content?.users?.user?.games?.game
+							?.leagues?.league[0]?.players?.player
 
 					players = players
 						.filter((p) => !p.ownership.owner_team_key)
@@ -84,7 +85,8 @@ async function getBestAvailablePlayers() {
 							const rankingData = rankingChunk.find(
 								(r) =>
 									p.name.full === r.Player &&
-									p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
+									p.editorial_team_abbr.toLowerCase() ===
+										r.Team.toLowerCase()
 							)
 							return playerFactory(p, rankingData)
 						})
@@ -93,7 +95,9 @@ async function getBestAvailablePlayers() {
 
 					if (results.length >= minListSize) {
 						console.log(
-							`${results.length} players found from searching through ${
+							`${
+								results.length
+							} players found from searching through ${
 								rankingIndex * chunkSize
 							}.`
 						)
@@ -104,7 +108,9 @@ async function getBestAvailablePlayers() {
 					console.error(err)
 					if (err.response.status === 999) {
 						limit.clearQueue()
-						console.error('We got rate limited! Killing the process.')
+						console.error(
+							'We got rate limited! Killing the process.'
+						)
 						process.exit(1)
 					}
 				}
