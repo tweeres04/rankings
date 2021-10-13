@@ -15,7 +15,9 @@ function playerFactory(playerData, rankingData) {
 		position: playerData.display_position,
 		team: playerData.editorial_team_abbr.toUpperCase(),
 		projectedRank: _.toNumber(rankingData.Rank),
-		projectedPoints: _.toNumber(rankingData.Points),
+		projectedPoints: rankingData.Points
+			? _.toNumber(rankingData.Points)
+			: 'N/A',
 	}
 }
 
@@ -47,19 +49,26 @@ async function theQuery() {
 }
 
 async function getBestAvailablePlayers() {
-	const rankingsCsv = await readFile('data/rankings.csv', 'utf8')
-	const rankings = parse(rankingsCsv, { columns: true, bom: true })
+	const anth = process.argv[2] === 'anth'
+	const rankingsCsv = await readFile(
+		anth ? 'data/anth.csv' : 'data/rankings.csv',
+		'utf8'
+	)
+	const rankings = parse(rankingsCsv, {
+		columns: true,
+		bom: true,
+	})
 
 	try {
 		const response = await theQuery()
 		let players =
 			response?.fantasy_content?.users?.user?.games?.game?.leagues
-				?.league[0]?.teams?.team?.players?.player
+				?.league[anth ? 1 : 0]?.teams?.team?.players?.player
 
 		players = players.map((p) => {
 			const rankingData = rankings.find(
 				(r) =>
-					p.name.full === r.Player &&
+					p.name.full === (r.Player ?? r['Player Name']) &&
 					p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
 			)
 

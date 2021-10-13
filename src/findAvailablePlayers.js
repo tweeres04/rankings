@@ -18,7 +18,9 @@ function playerFactory(playerData, rankingData) {
 		position: playerData.display_position,
 		team: playerData.editorial_team_abbr.toUpperCase(),
 		projectedRank: _.toNumber(rankingData.Rank),
-		projectedPoints: _.toNumber(rankingData.Points),
+		projectedPoints: rankingData.Points
+			? _.toNumber(rankingData.Points)
+			: 'N/A',
 	}
 }
 
@@ -51,8 +53,12 @@ async function theQuery(playerKeys) {
 }
 
 async function getBestAvailablePlayers() {
+	const anth = process.argv[2] === 'anth'
 	const results = []
-	const rankingsCsv = await readFile('data/rankings.csv', 'utf8')
+	const rankingsCsv = await readFile(
+		anth ? 'data/anth.csv' : 'data/rankings.csv',
+		'utf8'
+	)
 	const rankings = parse(rankingsCsv, { columns: true, bom: true })
 	const playerData = JSON.parse(await readFile('data/players.json', 'utf8'))
 	const limit = pLimit(1)
@@ -68,7 +74,8 @@ async function getBestAvailablePlayers() {
 							(r) =>
 								playerData.find(
 									(pd) =>
-										pd.name === r.Player &&
+										pd.name ===
+											(r.Player ?? r['Player Name']) &&
 										pd.team.toLowerCase() ===
 											r.Team.toLowerCase()
 								)?.key
@@ -77,14 +84,15 @@ async function getBestAvailablePlayers() {
 					const response = await theQuery(playerKeys)
 					let players =
 						response?.fantasy_content?.users?.user?.games?.game
-							?.leagues?.league[0]?.players?.player
+							?.leagues?.league[anth ? 1 : 0]?.players?.player
 
 					players = players
 						.filter((p) => !p.ownership.owner_team_key)
 						.map((p) => {
 							const rankingData = rankingChunk.find(
 								(r) =>
-									p.name.full === r.Player &&
+									p.name.full ===
+										(r.Player ?? r['Player Name']) &&
 									p.editorial_team_abbr.toLowerCase() ===
 										r.Team.toLowerCase()
 							)
