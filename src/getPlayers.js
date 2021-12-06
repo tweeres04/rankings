@@ -17,8 +17,11 @@ function playerFactory(playerData) {
 }
 
 async function getPlayers(page = 0, pageSize = 25) {
-	console.log(`Fetching page ${page}`)
+	if (page % 5 === 0) {
+		console.log(`Fetching page ${page}`)
+	}
 	const { access_token } = await getAccessToken()
+	let players = []
 	try {
 		const { data } = await axios.get(
 			`https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;is_available=1/leagues/players;count=100;start=${
@@ -36,9 +39,9 @@ async function getPlayers(page = 0, pageSize = 25) {
 			emptyTag: null,
 		})
 
-		let players =
-			response?.fantasy_content?.users?.user?.games?.game?.leagues?.league[0]
-				?.players?.player
+		players =
+			response?.fantasy_content?.users?.user?.games?.game?.leagues
+				?.league[0]?.players?.player
 
 		players = players.map(playerFactory)
 
@@ -46,11 +49,15 @@ async function getPlayers(page = 0, pageSize = 25) {
 			? players
 			: [...players, ...(await getPlayers(page + 1))]
 	} catch (err) {
-		console.error(err)
-		if (err.response.status === 401) {
+		if (err?.response?.status === 401) {
 			await refreshTheToken()
 			return getPlayers()
 		}
+		if (err?.response?.status === 400) {
+			console.error(err.message)
+			return players
+		}
+
 		throw err
 	}
 }

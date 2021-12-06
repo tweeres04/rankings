@@ -5,17 +5,17 @@
 	"type": "module",
 	"license": "MIT",
 	"dependencies": {
-		"axios": "^0.21.1",
-		"csv-parse": "^4.15.0",
-		"dotenv": "^8.2.0",
-		"lodash": "^4.17.20",
-		"open": "^7.3.1",
-		"p-limit": "^3.1.0",
+		"axios": "^0.24.0",
+		"csv-parse": "^5.0.3",
+		"dotenv": "^10.0.0",
+		"lodash": "^4.17.21",
+		"open": "^8.4.0",
+		"p-limit": "^4.0.0",
 		"xml2js": "^0.4.23",
-		"yahoo-fantasy": "^4.1.2"
+		"yahoo-fantasy": "^4.1.5"
 	},
 	"devDependencies": {
-		"eslint": "^7.18.0"
+		"eslint": "^8.4.0"
 	},
 	"scripts": {
 		"start": "node src/findAvailablePlayers.js",

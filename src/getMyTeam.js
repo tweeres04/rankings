@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import axios from 'axios'
 import { parseStringPromise } from 'xml2js'
-import parse from 'csv-parse/lib/sync.js'
+import { parse } from 'csv-parse/sync'
 import { readFile } from 'fs/promises'
 import _ from 'lodash'
 
