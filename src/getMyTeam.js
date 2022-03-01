@@ -18,6 +18,9 @@ function playerFactory(playerData, rankingData) {
 		projectedPoints: rankingData.Points
 			? _.toNumber(rankingData.Points)
 			: 'N/A',
+		actualPoints: playerData.player_points?.total
+			? _.toNumber(playerData.player_points.total)
+			: 'N/A',
 	}
 }
 
@@ -25,7 +28,7 @@ async function theQuery() {
 	const { access_token } = await getAccessToken()
 	try {
 		const { data } = await axios.get(
-			`https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;is_available=1/leagues/teams/players`,
+			`https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;is_available=1/leagues/teams/players;out=stats`,
 			{
 				headers: {
 					Authorization: `Bearer ${access_token}`,
@@ -48,7 +51,7 @@ async function theQuery() {
 	}
 }
 
-async function getBestAvailablePlayers() {
+async function getMyTeam() {
 	const anth = process.argv[2] === 'anth'
 	const rankingsCsv = await readFile(
 		anth ? 'data/anth.csv' : 'data/rankings.csv',
@@ -77,7 +80,9 @@ async function getBestAvailablePlayers() {
 
 		players = _.orderBy(players, 'projectedRank')
 
-		return players
+		const positionCounts = getPositionCounts(players)
+
+		return [players, positionCounts]
 	} catch (err) {
 		console.error(err)
 		if (err.response.status === 999) {
@@ -87,12 +92,25 @@ async function getBestAvailablePlayers() {
 	}
 }
 
+function getPositionCounts(players) {
+	const positions = players.flatMap(p => p.position.split(','))
+	let positionCounts = _.groupBy(positions)
+	positionCounts = _.mapValues(positionCounts, positions => positions.length)
+	positionCounts = _.map(positionCounts, (count, position) => ({
+		position,
+		count
+	}))
+	positionCounts = _.orderBy(positionCounts, 'count', 'desc')
+	return positionCounts
+}
+
 async function main() {
 	try {
 		console.log(`Fetching your team...`)
-		const results = await getBestAvailablePlayers()
+		const [players, positionCounts] = await getMyTeam()
 
-		console.table(results)
+		console.table(positionCounts)
+		console.table(players)
 	} catch (err) {
 		let error
 		try {
