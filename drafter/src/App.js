@@ -59,7 +59,10 @@ export default function App() {
 						const key = playerKey(ranking)
 						let isFilteredOut =
 							(filters.position &&
-								ranking.Pos !== filters.position) ||
+								ranking.Pos !== filters.position &&
+								!ranking.Pos.split(',').includes(
+									filters.position
+								)) ||
 							(filters.crossedOff &&
 								filters.crossedOff === 'crossedOff' &&
 								!crossedOff[key]) ||
@@ -80,6 +83,11 @@ export default function App() {
 										<td key={header} className={cellClass}>
 											{isCrossedOff ? (
 												<s>{ranking[header]}</s>
+											) : header === 'Pos' &&
+											  !ranking.foundPosition ? (
+												<span className="text-danger">
+													{ranking[header]}
+												</span>
 											) : (
 												ranking[header]
 											)}
