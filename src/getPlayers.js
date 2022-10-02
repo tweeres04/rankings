@@ -17,8 +17,8 @@ function playerFactory(playerData) {
 }
 
 async function getPlayers(page = 0, pageSize = 25) {
-	if (page % 5 === 0) {
-		console.log(`Fetching page ${page}`)
+	if ((page + 1) % 5 === 0) {
+		console.log(`Fetching page ${page + 1}`)
 	}
 	const { access_token } = await getAccessToken()
 	let players = []

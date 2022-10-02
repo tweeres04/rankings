@@ -54,7 +54,7 @@ async function theQuery() {
 async function getMyTeam() {
 	const anth = process.argv[2] === 'anth'
 	const rankingsCsv = await readFile(
-		anth ? 'data/anth.csv' : 'data/rankings.csv',
+		anth ? 'data/anth.csv' : 'data/goblet.csv',
 		'utf8'
 	)
 	const rankings = parse(rankingsCsv, {
@@ -71,7 +71,7 @@ async function getMyTeam() {
 		players = players.map((p) => {
 			const rankingData = rankings.find(
 				(r) =>
-					p.name.full === (r.Player ?? r['Player Name']) &&
+					p.name.full === (r.Name ?? r['Player Name']) &&
 					p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
 			)
 
@@ -93,12 +93,15 @@ async function getMyTeam() {
 }
 
 function getPositionCounts(players) {
-	const positions = players.flatMap(p => p.position.split(','))
+	const positions = players.flatMap((p) => p.position.split(','))
 	let positionCounts = _.groupBy(positions)
-	positionCounts = _.mapValues(positionCounts, positions => positions.length)
+	positionCounts = _.mapValues(
+		positionCounts,
+		(positions) => positions.length
+	)
 	positionCounts = _.map(positionCounts, (count, position) => ({
 		position,
-		count
+		count,
 	}))
 	positionCounts = _.orderBy(positionCounts, 'count', 'desc')
 	return positionCounts

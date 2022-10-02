@@ -6,7 +6,7 @@ import useCrossedOff from './App/useCrossedOff'
 import useFilters from './App/useFilters'
 import playerKey from './App/playerKey'
 
-const headers = ['Rank', 'Player', 'Team', 'Pos', 'Points']
+const headers = ['Rank', 'Name', 'Team', 'Pos', 'Points']
 
 export default function App() {
 	const { rankings, isLoading: isLoadingRankings, positions } = useRankings()
@@ -46,7 +46,7 @@ export default function App() {
 								'text-end': key === 'Points',
 							})
 							return (
-								<th key={key} class={cellClass}>
+								<th key={key} className={cellClass}>
 									{key}
 								</th>
 							)

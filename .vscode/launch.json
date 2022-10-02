@@ -5,15 +5,16 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "pwa-node",
+			"type": "node",
 			"request": "launch",
 			"name": "Find Available Players",
 			"skipFiles": ["<node_internals>/**"],
 			"program": "${workspaceFolder}/src/findAvailablePlayers.js",
 			"console": "externalTerminal"
+			// "args": ["anth"]
 		},
 		{
-			"type": "pwa-node",
+			"type": "node",
 			"request": "launch",
 			"name": "Make player database",
 			"skipFiles": ["<node_internals>/**"],
@@ -21,7 +22,7 @@
 			"console": "externalTerminal"
 		},
 		{
-			"type": "pwa-node",
+			"type": "node",
 			"request": "launch",
 			"name": "Get My Team",
 			"skipFiles": ["<node_internals>/**"],

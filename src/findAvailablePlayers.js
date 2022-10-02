@@ -56,7 +56,7 @@ async function getBestAvailablePlayers() {
 	const anth = process.argv[2] === 'anth'
 	const results = []
 	const rankingsCsv = await readFile(
-		anth ? 'data/anth.csv' : 'data/rankings.csv',
+		anth ? 'data/anth.csv' : 'data/goblet.csv',
 		'utf8'
 	)
 	const rankings = parse(rankingsCsv, { columns: true, bom: true })
@@ -75,7 +75,7 @@ async function getBestAvailablePlayers() {
 								playerData.find(
 									(pd) =>
 										pd.name ===
-											(r.Player ?? r['Player Name']) &&
+											(r.Name ?? r['Player Name']) &&
 										pd.team.toLowerCase() ===
 											r.Team.toLowerCase()
 								)?.key
@@ -92,7 +92,7 @@ async function getBestAvailablePlayers() {
 							const rankingData = rankingChunk.find(
 								(r) =>
 									p.name.full ===
-										(r.Player ?? r['Player Name']) &&
+										(r.Name ?? r['Player Name']) &&
 									p.editorial_team_abbr.toLowerCase() ===
 										r.Team.toLowerCase()
 							)
