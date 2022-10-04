@@ -14,8 +14,8 @@ function playerFactory(playerData, rankingData) {
 		name: playerData.name.full,
 		position: playerData.display_position,
 		team: playerData.editorial_team_abbr.toUpperCase(),
-		projectedRank: _.toNumber(rankingData.Rank),
-		projectedPoints: rankingData.Points
+		projectedRank: rankingData ? _.toNumber(rankingData.Rank) : null,
+		projectedPoints: rankingData?.Points
 			? _.toNumber(rankingData.Points)
 			: 'N/A',
 		actualPoints: playerData.player_points?.total
@@ -52,9 +52,9 @@ async function theQuery() {
 }
 
 async function getMyTeam() {
-	const anth = process.argv[2] === 'anth'
+	const kitimat = process.argv[2] === 'kitimat'
 	const rankingsCsv = await readFile(
-		anth ? 'data/anth.csv' : 'data/goblet.csv',
+		kitimat ? 'data/kitimat.csv' : 'data/goblet.csv',
 		'utf8'
 	)
 	const rankings = parse(rankingsCsv, {
@@ -66,12 +66,12 @@ async function getMyTeam() {
 		const response = await theQuery()
 		let players =
 			response?.fantasy_content?.users?.user?.games?.game?.leagues
-				?.league[anth ? 1 : 0]?.teams?.team?.players?.player
+				?.league[kitimat ? 2 : 0]?.teams?.team?.players?.player
 
 		players = players.map((p) => {
 			const rankingData = rankings.find(
 				(r) =>
-					p.name.full === (r.Name ?? r['Player Name']) &&
+					p.name.full === (r.Name ?? r.Player) &&
 					p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
 			)
 

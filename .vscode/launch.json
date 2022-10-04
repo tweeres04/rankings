@@ -10,8 +10,8 @@
 			"name": "Find Available Players",
 			"skipFiles": ["<node_internals>/**"],
 			"program": "${workspaceFolder}/src/findAvailablePlayers.js",
-			"console": "externalTerminal"
-			// "args": ["anth"]
+			"console": "externalTerminal",
+			"args": ["kitimat"]
 		},
 		{
 			"type": "node",
@@ -26,7 +26,8 @@
 			"request": "launch",
 			"name": "Get My Team",
 			"skipFiles": ["<node_internals>/**"],
-			"program": "${workspaceFolder}/src/getMyTeam.js"
+			"program": "${workspaceFolder}/src/getMyTeam.js",
+			"args": ["kitimat"]
 		}
 	]
 }

@@ -53,10 +53,10 @@ async function theQuery(playerKeys) {
 }
 
 async function getBestAvailablePlayers() {
-	const anth = process.argv[2] === 'anth'
+	const kitimat = process.argv[2] === 'kitimat'
 	const results = []
 	const rankingsCsv = await readFile(
-		anth ? 'data/anth.csv' : 'data/goblet.csv',
+		kitimat ? 'data/kitimat.csv' : 'data/goblet.csv',
 		'utf8'
 	)
 	const rankings = parse(rankingsCsv, { columns: true, bom: true })
@@ -74,8 +74,7 @@ async function getBestAvailablePlayers() {
 							(r) =>
 								playerData.find(
 									(pd) =>
-										pd.name ===
-											(r.Name ?? r['Player Name']) &&
+										pd.name === (r.Name ?? r['Player']) &&
 										pd.team.toLowerCase() ===
 											r.Team.toLowerCase()
 								)?.key
@@ -84,15 +83,14 @@ async function getBestAvailablePlayers() {
 					const response = await theQuery(playerKeys)
 					let players =
 						response?.fantasy_content?.users?.user?.games?.game
-							?.leagues?.league[anth ? 1 : 0]?.players?.player
+							?.leagues?.league[kitimat ? 2 : 0]?.players?.player
 
 					players = players
 						.filter((p) => !p.ownership.owner_team_key)
 						.map((p) => {
 							const rankingData = rankingChunk.find(
 								(r) =>
-									p.name.full ===
-										(r.Name ?? r['Player Name']) &&
+									p.name.full === (r.Name ?? r['Player']) &&
 									p.editorial_team_abbr.toLowerCase() ===
 										r.Team.toLowerCase()
 							)
