@@ -10,7 +10,7 @@ dotenv.config()
 
 import { getAccessToken, refreshTheToken } from './auth.js'
 
-const minListSize = 20
+const minListSize = 25
 
 function playerFactory(playerData, rankingData) {
 	return {
@@ -54,9 +54,14 @@ async function theQuery(playerKeys) {
 
 async function getBestAvailablePlayers() {
 	const kitimat = process.argv[2] === 'kitimat'
+	const anth = process.argv[2] === 'anth'
 	const results = []
 	const rankingsCsv = await readFile(
-		kitimat ? 'data/kitimat.csv' : 'data/goblet.csv',
+		kitimat
+			? 'data/kitimat.csv'
+			: anth
+			? 'data/anth.csv'
+			: 'data/goblet.csv',
 		'utf8'
 	)
 	const rankings = parse(rankingsCsv, { columns: true, bom: true })
@@ -74,7 +79,10 @@ async function getBestAvailablePlayers() {
 							(r) =>
 								playerData.find(
 									(pd) =>
-										pd.name === (r.Name ?? r['Player']) &&
+										pd.name ===
+											(r.Name ??
+												r.Player ??
+												r['Player Name']) &&
 										pd.team.toLowerCase() ===
 											r.Team.toLowerCase()
 								)?.key
@@ -83,14 +91,18 @@ async function getBestAvailablePlayers() {
 					const response = await theQuery(playerKeys)
 					let players =
 						response?.fantasy_content?.users?.user?.games?.game
-							?.leagues?.league[kitimat ? 2 : 0]?.players?.player
+							?.leagues?.league[kitimat ? 2 : anth ? 1 : 0]
+							?.players?.player
 
 					players = players
 						.filter((p) => !p.ownership.owner_team_key)
 						.map((p) => {
 							const rankingData = rankingChunk.find(
 								(r) =>
-									p.name.full === (r.Name ?? r['Player']) &&
+									p.name.full ===
+										(r.Name ??
+											r.Player ??
+											r['Player Name']) &&
 									p.editorial_team_abbr.toLowerCase() ===
 										r.Team.toLowerCase()
 							)
@@ -112,7 +124,7 @@ async function getBestAvailablePlayers() {
 					}
 				} catch (err) {
 					console.error(err)
-					if (err.response.status === 999) {
+					if (err.response?.status === 999) {
 						limit.clearQueue()
 						console.error(
 							'We got rate limited! Killing the process.'

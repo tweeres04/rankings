@@ -53,8 +53,13 @@ async function theQuery() {
 
 async function getMyTeam() {
 	const kitimat = process.argv[2] === 'kitimat'
+	const anth = process.argv[2] === 'anth'
 	const rankingsCsv = await readFile(
-		kitimat ? 'data/kitimat.csv' : 'data/goblet.csv',
+		kitimat
+			? 'data/kitimat.csv'
+			: anth
+			? 'data/anth.csv'
+			: 'data/goblet.csv',
 		'utf8'
 	)
 	const rankings = parse(rankingsCsv, {
@@ -66,12 +71,13 @@ async function getMyTeam() {
 		const response = await theQuery()
 		let players =
 			response?.fantasy_content?.users?.user?.games?.game?.leagues
-				?.league[kitimat ? 2 : 0]?.teams?.team?.players?.player
+				?.league[kitimat ? 2 : anth ? 1 : 0]?.teams?.team?.players
+				?.player
 
 		players = players.map((p) => {
 			const rankingData = rankings.find(
 				(r) =>
-					p.name.full === (r.Name ?? r.Player) &&
+					p.name.full === (r.Name ?? r.Player ?? r['Player Name']) &&
 					p.editorial_team_abbr.toLowerCase() === r.Team.toLowerCase()
 			)
 
