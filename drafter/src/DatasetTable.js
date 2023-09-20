@@ -1,21 +1,28 @@
 import clsx from 'clsx'
 
-import Filters from './App/Filters'
-import useRankings from './App/useRankings'
-import useCrossedOff from './App/useCrossedOff'
-import useFilters from './App/useFilters'
-import playerKey from './App/playerKey'
+import Filters from './DatasetTable/Filters'
+import useRankings from './DatasetTable/useRankings'
+import useFilters from './DatasetTable/useFilters'
+import playerKey from './DatasetTable/playerKey'
 
-const headers = ['Rank', 'Name', 'Team', 'Pos', 'Points']
+const headers = ['Rank', 'Player', 'Team', 'Pos', 'Points']
 
-export default function App() {
-	const { rankings, isLoading: isLoadingRankings, positions } = useRankings()
+export default function DatasetTable({
+	dataset,
+	activeDataset,
+	crossedOffData,
+}) {
+	const {
+		rankings,
+		isLoading: isLoadingRankings,
+		positions,
+	} = useRankings(dataset)
 	const {
 		crossedOff,
 		toggleCrossedOff,
 		isLoading: isLoadingCrossedOff,
 		clearCrossedOff,
-	} = useCrossedOff()
+	} = crossedOffData
 	const {
 		filters,
 		setFilter,
@@ -27,10 +34,15 @@ export default function App() {
 		isLoadingRankings || isLoadingCrossedOff || isLoadingFilters
 
 	return isLoading ? (
-		<LoadingSpinner />
+		activeDataset === dataset ? (
+			<LoadingSpinner />
+		) : null
 	) : (
-		<div className="container">
-			<h1 className="mb-3">Drafter</h1>
+		<div
+			className={clsx('container', {
+				'd-none': activeDataset !== dataset,
+			})}
+		>
 			<Filters
 				filters={filters}
 				setFilter={setFilter}

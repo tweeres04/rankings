@@ -1,3 +1,3 @@
 export default function playerKey(player) {
-	return `${player.Name}${player.Team}`
+	return `${player.Player}${player.Team}`
 }

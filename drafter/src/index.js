@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import Drafter from './Drafter'
 import reportWebVitals from './reportWebVitals'
 
 ReactDOM.render(
 	<React.StrictMode>
-		<App />
+		<Drafter />
 	</React.StrictMode>,
 	document.getElementById('root')
 )
