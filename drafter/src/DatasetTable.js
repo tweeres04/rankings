@@ -1,129 +1,123 @@
 import clsx from 'clsx'
 
-import Filters from './DatasetTable/Filters'
-import useRankings from './DatasetTable/useRankings'
-import useFilters from './DatasetTable/useFilters'
-import playerKey from './DatasetTable/playerKey'
+import playerKey from './playerKey'
 
 const headers = ['Rank', 'Player', 'Team', 'Pos', 'Points']
 
 export default function DatasetTable({
-	dataset,
-	activeDataset,
+	rankingsData,
 	crossedOffData,
+	myTeamData,
+	filtersData,
 }) {
-	const {
-		rankings,
-		isLoading: isLoadingRankings,
-		positions,
-	} = useRankings(dataset)
 	const {
 		crossedOff,
 		toggleCrossedOff,
 		isLoading: isLoadingCrossedOff,
-		clearCrossedOff,
 	} = crossedOffData
-	const {
-		filters,
-		setFilter,
-		clearFilters,
-		isLoading: isLoadingFilters,
-	} = useFilters()
+	const { rankings, isLoading: isLoadingRankings } = rankingsData
+	const { crossedOff: myTeam, toggleCrossedOff: toggleMyTeam } = myTeamData
+	const { filters, isLoading: isLoadingFilters } = filtersData
 
 	const isLoading =
 		isLoadingRankings || isLoadingCrossedOff || isLoadingFilters
 
 	return isLoading ? (
-		activeDataset === dataset ? (
-			<LoadingSpinner />
-		) : null
+		<LoadingSpinner />
 	) : (
-		<div
-			className={clsx('container', {
-				'd-none': activeDataset !== dataset,
-			})}
-		>
-			<Filters
-				filters={filters}
-				setFilter={setFilter}
-				clearFilters={clearFilters}
-				positions={positions}
-				clearCrossedOff={clearCrossedOff}
-			/>
-			<table className="table">
-				<thead>
-					<tr>
-						{headers.map((key) => {
-							const cellClass = clsx({
-								'text-end': key === 'Points',
-							})
-							return (
-								<th key={key} className={cellClass}>
-									{key}
-								</th>
-							)
-						})}
-						<th style={{ width: 150 }}></th>
-					</tr>
-				</thead>
-				<tbody>
-					{rankings.map((ranking) => {
-						const key = playerKey(ranking)
-						let isFilteredOut =
-							(filters.position &&
-								ranking.Pos !== filters.position &&
-								!ranking.Pos.split(',').includes(
-									filters.position
-								)) ||
-							(filters.crossedOff &&
-								filters.crossedOff === 'crossedOff' &&
-								!crossedOff[key]) ||
-							(filters.crossedOff === 'notCrossedOff' &&
-								crossedOff[key])
-						const isCrossedOff = crossedOff[key]
-						const rowClass = clsx({
-							'table-secondary': isCrossedOff,
-							'd-none': isFilteredOut,
+		<table className="table">
+			<thead>
+				<tr>
+					{headers.map((key) => {
+						const cellClass = clsx({
+							'text-end': key === 'Points',
 						})
 						return (
-							<tr key={key} className={rowClass}>
-								{headers.map((header) => {
-									const cellClass = clsx({
-										'text-end': header === 'Points',
-									})
-									return (
-										<td key={header} className={cellClass}>
-											{isCrossedOff ? (
-												<s>{ranking[header]}</s>
-											) : header === 'Pos' &&
-											  !ranking.foundPosition ? (
-												<span className="text-danger">
-													{ranking[header]}
-												</span>
-											) : (
-												ranking[header]
-											)}
-										</td>
-									)
-								})}
-								<td className="text-end">
-									<button
-										className="btn btn-primary"
-										onClick={() => {
-											toggleCrossedOff(ranking)
-										}}
-									>
-										{isCrossedOff
-											? 'Un cross off'
-											: 'Cross off'}
-									</button>
-								</td>
-							</tr>
+							<th key={key} className={cellClass}>
+								{key}
+							</th>
 						)
 					})}
-				</tbody>
-			</table>
-		</div>
+					<th style={{ width: 150 }}></th>
+				</tr>
+			</thead>
+			<tbody>
+				{rankings.map((ranking) => {
+					const key = playerKey(ranking)
+					let isFilteredOut =
+						(filters.position &&
+							ranking.Pos !== filters.position &&
+							!ranking.Pos.split(',').includes(
+								filters.position
+							)) ||
+						(filters.crossedOff &&
+							filters.crossedOff === 'crossedOff' &&
+							!crossedOff[key]) ||
+						(filters.crossedOff === 'notCrossedOff' &&
+							crossedOff[key])
+					const isCrossedOff = crossedOff[key]
+					const isOnMyTeam = myTeam[key]
+					const rowClass = clsx({
+						'table-secondary': isCrossedOff || isOnMyTeam,
+						'd-none': isFilteredOut,
+					})
+					return (
+						<tr key={key} className={rowClass}>
+							{headers.map((header) => {
+								const cellClass = clsx({
+									'text-end': header === 'Points',
+								})
+								return (
+									<td key={header} className={cellClass}>
+										{isCrossedOff || isOnMyTeam ? (
+											<s>{ranking[header]}</s>
+										) : header === 'Pos' &&
+										  !ranking.foundPosition ? (
+											<span className="text-danger">
+												{ranking[header]}
+											</span>
+										) : (
+											ranking[header]
+										)}
+									</td>
+								)
+							})}
+							<td
+								className="text-end"
+								style={{ minWidth: '20rem' }}
+							>
+								<button
+									className="btn btn-primary btn-sm"
+									onClick={() => {
+										toggleMyTeam(ranking)
+										if (isCrossedOff) {
+											toggleCrossedOff(ranking)
+										}
+									}}
+								>
+									{isOnMyTeam
+										? 'Remove from my team'
+										: 'Add to my team'}
+								</button>{' '}
+								<button
+									className="btn btn-secondary btn-sm"
+									onClick={() => {
+										toggleCrossedOff(ranking)
+										if (isOnMyTeam) {
+											toggleMyTeam(ranking)
+										}
+									}}
+								>
+									{isCrossedOff
+										? 'Un cross off'
+										: 'Cross off'}
+								</button>
+							</td>
+						</tr>
+					)
+				})}
+			</tbody>
+		</table>
 	)
 }
 

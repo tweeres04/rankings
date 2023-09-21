@@ -1,10 +1,10 @@
 export default function Filters({
-	filters,
-	setFilter,
-	clearFilters,
+	filtersData,
 	positions,
 	clearCrossedOff,
+	clearMyTeam,
 }) {
+	const { filters, setFilter, clearFilters } = filtersData
 	return (
 		<div className="row g-4 align-items-center mb-3">
 			<div className="col-md-3">
@@ -18,7 +18,7 @@ export default function Filters({
 					}}
 				>
 					<option value="">Position...</option>
-					{positions.map((p) => (
+					{(positions ?? []).map((p) => (
 						<option key={p} value={p}>
 							{p}
 						</option>
@@ -51,9 +51,12 @@ export default function Filters({
 			<div className="col-auto">
 				<button
 					className="btn btn-outline-danger"
-					onClick={clearCrossedOff}
+					onClick={() => {
+						clearCrossedOff()
+						clearMyTeam()
+					}}
 				>
-					Reset crossed off players
+					Reset Drafter
 				</button>
 			</div>
 		</div>
