@@ -3,7 +3,11 @@ import clsx from 'clsx'
 import { get, set } from 'idb-keyval'
 
 import DatasetTable from './DatasetTable'
-import useCrossedOff from './DatasetTable/useCrossedOff'
+import MyTeam from './MyTeam'
+import useCrossedOff from './Drafter/useCrossedOff'
+import Filters from './Drafter/Filters'
+import useFilters from './Drafter/useFilters'
+import useRankings from './Drafter/useRankings'
 
 function useDataset() {
 	const [dataset, setDataset] = useState()
@@ -26,9 +30,19 @@ function useDataset() {
 }
 
 export default function Drafter() {
-	const { dataset, setDataset, loading: loadingDataset } = useDataset()
-	const crossedOffData = useCrossedOff()
-	return loadingDataset ? null : (
+	const crossedOffData = useCrossedOff('crossedOff')
+	const myTeamData = useCrossedOff('myTeam')
+	const { dataset, setDataset } = useDataset()
+	const playersRankingsData = useRankings('players')
+	const goaliesRankingsData = useRankings('goalies')
+	const activeRankingsData =
+		dataset === 'players'
+			? playersRankingsData
+			: dataset === 'goalies'
+			? goaliesRankingsData
+			: {}
+	const filtersData = useFilters()
+	return (
 		<>
 			<div className="container">
 				<h1 className="mb-3">Drafter</h1>
@@ -54,17 +68,31 @@ export default function Drafter() {
 						</button>
 					</li>
 				</ul>
+				<Filters
+					filtersData={filtersData}
+					positions={activeRankingsData.positions}
+					clearCrossedOff={crossedOffData.clearCrossedOff}
+					clearMyTeam={myTeamData.clearCrossedOff}
+				/>
+				<div className="row">
+					<div className="col-9">
+						<DatasetTable
+							rankingsData={activeRankingsData}
+							dataset={dataset}
+							crossedOffData={crossedOffData}
+							myTeamData={myTeamData}
+							filtersData={filtersData}
+						/>
+					</div>
+					<div className="col">
+						<MyTeam
+							playersRankingsData={playersRankingsData}
+							goaliesRankingsData={goaliesRankingsData}
+							myTeamData={myTeamData}
+						/>
+					</div>
+				</div>
 			</div>
-			<DatasetTable
-				dataset="players"
-				activeDataset={dataset}
-				crossedOffData={crossedOffData}
-			/>
-			<DatasetTable
-				dataset="goalies"
-				activeDataset={dataset}
-				crossedOffData={crossedOffData}
-			/>
 		</>
 	)
 }
