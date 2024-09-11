@@ -1,84 +1,64 @@
+/* global gapi, google */
 import { useState, useEffect } from 'react'
-import clsx from 'clsx'
-import { get, set } from 'idb-keyval'
 
+import { useFreshSheetsRankings } from './useFreshSheetsRankings'
 import DatasetTable from './DatasetTable'
 import MyTeam from './MyTeam'
 import useCrossedOff from './Drafter/useCrossedOff'
 import Filters from './Drafter/Filters'
 import useFilters from './Drafter/useFilters'
-import useRankings from './Drafter/useRankings'
-
-function useDataset() {
-	const [dataset, setDataset] = useState()
-	const [loading, setLoading] = useState(true)
-
-	useEffect(() => {
-		async function getDataset() {
-			const dataset = await get('dataset')
-			setDataset(dataset ?? 'players')
-			setLoading(false)
-		}
-		getDataset()
-	}, [])
-
-	useEffect(() => {
-		set('dataset', dataset)
-	}, [dataset])
-
-	return { dataset, setDataset, loading }
-}
 
 export default function Drafter() {
 	const crossedOffData = useCrossedOff('crossedOff')
 	const myTeamData = useCrossedOff('myTeam')
-	const { dataset, setDataset } = useDataset()
-	const playersRankingsData = useRankings('players')
-	const goaliesRankingsData = useRankings('goalies')
-	const activeRankingsData =
-		dataset === 'players'
-			? playersRankingsData
-			: dataset === 'goalies'
-			? goaliesRankingsData
-			: {}
+
+	const freshSheetsRankingsData = useFreshSheetsRankings()
+	const {
+		rankings,
+		startAuthorizeAndRefreshRankings,
+		positions,
+		isLoading: isLoadingFreshSheetsRankingsData,
+		GoogleSheetIdModal,
+	} = freshSheetsRankingsData
 	const filtersData = useFilters()
+
 	return (
 		<>
 			<div className="container">
 				<h1 className="mb-3">Drafter</h1>
-				<ul className="nav nav-tabs mb-3">
-					<li className="nav-item">
+				<div className="row g-4 align-items-center mb-3">
+					<div className="col">
+						<Filters
+							rankings={rankings}
+							filtersData={filtersData}
+							positions={positions}
+						/>
+					</div>
+					<div className="col-auto">
+						{!isLoadingFreshSheetsRankingsData ? (
+							<button
+								className="btn btn-outline-primary"
+								onClick={startAuthorizeAndRefreshRankings}
+							>
+								{rankings ? <>Refresh</> : <>Fetch</>} Rankings
+								from Fresh Sheets
+							</button>
+						) : null}{' '}
 						<button
-							className={clsx('nav-link', {
-								active: dataset === 'players',
-							})}
-							onClick={() => setDataset('players')}
+							className="btn btn-outline-danger"
+							onClick={() => {
+								crossedOffData.clearCrossedOff()
+								myTeamData.clearMyTeam()
+							}}
 						>
-							Players
+							Reset Drafter
 						</button>
-					</li>
-					<li className="nav-item">
-						<button
-							className={clsx('nav-link', {
-								active: dataset === 'goalies',
-							})}
-							onClick={() => setDataset('goalies')}
-						>
-							Goalies
-						</button>
-					</li>
-				</ul>
-				<Filters
-					filtersData={filtersData}
-					positions={activeRankingsData.positions}
-					clearCrossedOff={crossedOffData.clearCrossedOff}
-					clearMyTeam={myTeamData.clearCrossedOff}
-				/>
+					</div>
+				</div>
 				<div className="row">
 					<div className="col-9">
 						<DatasetTable
-							rankingsData={activeRankingsData}
-							dataset={dataset}
+							rankingsData={freshSheetsRankingsData}
 							crossedOffData={crossedOffData}
 							myTeamData={myTeamData}
 							filtersData={filtersData}
@@ -86,13 +66,13 @@ export default function Drafter() {
 					</div>
 					<div className="col">
 						<MyTeam
-							playersRankingsData={playersRankingsData}
-							goaliesRankingsData={goaliesRankingsData}
+							playersRankingsData={freshSheetsRankingsData}
 							myTeamData={myTeamData}
 						/>
 					</div>
 				</div>
 			</div>
+			<GoogleSheetIdModal />
 		</>
 	)
 }

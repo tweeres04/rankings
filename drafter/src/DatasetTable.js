@@ -2,7 +2,7 @@ import clsx from 'clsx'
 
 import playerKey from './playerKey'
 
-const headers = ['Rank', 'Player', 'Team', 'Pos', 'Points']
+const headers = ['Rank', 'Name', 'Team', 'Pos', 'Points', 'VORP']
 
 export default function DatasetTable({
 	rankingsData,
@@ -24,7 +24,7 @@ export default function DatasetTable({
 
 	return isLoading ? (
 		<LoadingSpinner />
-	) : (
+	) : rankings ? (
 		<table className="table">
 			<thead>
 				<tr>
@@ -52,9 +52,10 @@ export default function DatasetTable({
 							)) ||
 						(filters.crossedOff &&
 							filters.crossedOff === 'crossedOff' &&
-							!crossedOff[key]) ||
+							!crossedOff[key] &&
+							!myTeam[key]) ||
 						(filters.crossedOff === 'notCrossedOff' &&
-							crossedOff[key])
+							(crossedOff[key] || myTeam[key]))
 					const isCrossedOff = crossedOff[key]
 					const isOnMyTeam = myTeam[key]
 					const rowClass = clsx({
@@ -71,11 +72,6 @@ export default function DatasetTable({
 									<td key={header} className={cellClass}>
 										{isCrossedOff || isOnMyTeam ? (
 											<s>{ranking[header]}</s>
-										) : header === 'Pos' &&
-										  !ranking.foundPosition ? (
-											<span className="text-danger">
-												{ranking[header]}
-											</span>
 										) : (
 											ranking[header]
 										)}
@@ -118,7 +114,7 @@ export default function DatasetTable({
 				})}
 			</tbody>
 		</table>
-	)
+	) : null
 }
 
 function LoadingSpinner() {
