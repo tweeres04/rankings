@@ -151,6 +151,16 @@ export function useFreshSheetsRankings() {
 												<strong>{'{sheet id}'}</strong>
 												/edit
 											</p>
+											<p>
+												Don't have a FreshSheets? Go
+												here:{' '}
+												<a
+													href="https://getfreshsheets.com"
+													target="_blank"
+												>
+													https://getfreshsheets.com
+												</a>
+											</p>
 										</div>
 									</div>
 								</div>
