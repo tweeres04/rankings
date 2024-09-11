@@ -67,6 +67,9 @@ export default function MyTeam({ playersRankingsData, myTeamData }) {
 				})}
 			</ul>
 			<h5>Counts</h5>
+			<p className="mb-0" style={{ fontSize: '0.8em' }}>
+				To do: use position counts from fresh sheets
+			</p>
 			<table className="table">
 				<thead>
 					<tr>
@@ -79,7 +82,9 @@ export default function MyTeam({ playersRankingsData, myTeamData }) {
 					{Object.keys(positionCounts).map((pos) => (
 						<tr key={pos}>
 							<td>{pos}</td>
-							<td className="text-end">{positionCounts[pos]}</td>
+							<td className="text-end">
+								{positionCounts[pos]}/{positionTotals[pos]}
+							</td>
 							<td className="text-end">
 								{(
 									(positionCounts[pos] /

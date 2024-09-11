@@ -1,6 +1,3 @@
-/* global gapi, google */
-import { useState, useEffect } from 'react'
-
 import { useFreshSheetsRankings } from './useFreshSheetsRankings'
 import DatasetTable from './DatasetTable'
 import MyTeam from './MyTeam'
