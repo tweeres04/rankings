@@ -10,7 +10,7 @@ export default function useRankings(dataset) {
 		async function getData() {
 			if (dataset) {
 				const playerDataPromise = fetch('/data/players.json')
-				Papa.parse(`/data/anth-${dataset}.csv`, {
+				Papa.parse(`/data/goblet-rankings.csv`, {
 					download: true,
 					header: true,
 					complete: async ({ data }) => {
@@ -23,7 +23,7 @@ export default function useRankings(dataset) {
 							let playerData = allPlayerData.filter(
 								(pd) =>
 									pd.name.toLowerCase() ===
-									ranking.Player.toLowerCase()
+									ranking.Name.toLowerCase()
 							)
 
 							if (playerData.length > 1) {
