@@ -21,6 +21,7 @@ function playerFactory(playerData, rankingData) {
 		actualPoints: playerData.player_points?.total
 			? _.toNumber(playerData.player_points.total)
 			: 'N/A',
+		disabledList: playerData.on_disabled_list === '1',
 	}
 }
 
@@ -99,7 +100,9 @@ async function getMyTeam() {
 }
 
 function getPositionCounts(players) {
-	const positions = players.flatMap((p) => p.position.split(','))
+	const positions = players
+		.filter((p) => !p.disabledList)
+		.flatMap((p) => p.position.split(','))
 	let positionCounts = _.groupBy(positions)
 	positionCounts = _.mapValues(
 		positionCounts,
