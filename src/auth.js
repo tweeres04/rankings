@@ -11,6 +11,8 @@ export async function getAccessToken() {
 		const data = await readFile(tokenFile, { encoding: 'utf8' })
 		return JSON.parse(data)
 	} catch (err) {
+		console.error(err)
+
 		await open(
 			`https://api.login.yahoo.com/oauth2/request_auth?client_id=${process.env.YAHOO_CLIENT_ID}&redirect_uri=oob&response_type=code`
 		)
@@ -42,7 +44,10 @@ export async function getAccessToken() {
 						console.error(err)
 					})
 
-				writeFile(tokenFile, JSON.stringify({ access_token, refresh_token }))
+				await writeFile(
+					tokenFile,
+					JSON.stringify({ access_token, refresh_token })
+				)
 
 				rl.close()
 
@@ -76,7 +81,7 @@ export async function refreshTheToken() {
 			console.error(err)
 		})
 
-	writeFile(
+	await writeFile(
 		tokenFile,
 		JSON.stringify({ access_token, refresh_token: newRefreshToken })
 	)
