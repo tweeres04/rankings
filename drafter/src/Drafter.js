@@ -13,7 +13,6 @@ export default function Drafter() {
 	const {
 		rankings,
 		startAuthorizeAndRefreshRankings,
-		positions,
 		isLoading: isLoadingFreshSheetsRankingsData,
 		GoogleSheetIdModal,
 	} = freshSheetsRankingsData
@@ -28,7 +27,6 @@ export default function Drafter() {
 						<Filters
 							rankings={rankings}
 							filtersData={filtersData}
-							positions={positions}
 						/>
 					</div>
 					<div className="col-auto">
@@ -37,15 +35,15 @@ export default function Drafter() {
 								className="btn btn-outline-primary"
 								onClick={startAuthorizeAndRefreshRankings}
 							>
-								{rankings ? <>Refresh</> : <>Fetch</>} Rankings
-								from Fresh Sheets
+								{rankings ? <>Refresh</> : <>Fetch</>} data from
+								FreshSheets
 							</button>
 						) : null}{' '}
 						<button
 							className="btn btn-outline-danger"
 							onClick={() => {
 								crossedOffData.clearCrossedOff()
-								myTeamData.clearMyTeam()
+								myTeamData.clearCrossedOff()
 							}}
 						>
 							Reset Drafter

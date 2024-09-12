@@ -1,5 +1,14 @@
-export default function Filters({ filtersData, positions }) {
+import { uniq, orderBy } from 'lodash'
+
+export default function Filters({ rankings, filtersData }) {
 	const { filters, setFilter, clearFilters } = filtersData
+
+	let positions = rankings
+		? rankings.flatMap(({ Pos }) => Pos.split('/'))
+		: []
+	positions = uniq(positions)
+	positions = orderBy(positions)
+
 	return (
 		<div className="row g-4 align-items-center">
 			<div className="col-auto">
@@ -12,7 +21,7 @@ export default function Filters({ filtersData, positions }) {
 						setFilter('position', event.target.value)
 					}}
 				>
-					<option value="">Position...</option>
+					<option value="">All positions</option>
 					{(positions ?? []).map((p) => (
 						<option key={p} value={p}>
 							{p}

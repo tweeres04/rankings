@@ -47,7 +47,7 @@ export default function DatasetTable({
 					let isFilteredOut =
 						(filters.position &&
 							ranking.Pos !== filters.position &&
-							!ranking.Pos.split(',').includes(
+							!ranking.Pos.split('/').includes(
 								filters.position
 							)) ||
 						(filters.crossedOff &&

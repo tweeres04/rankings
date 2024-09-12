@@ -59,6 +59,7 @@ export function useFreshSheetsRankings() {
 	const [isLoading, setIsLoading] = useState(true)
 	const [authorized, setAuthorized] = useState(false)
 	const [rankings, setRankings] = useState()
+	const [positionTotals, setPositionTotals] = useState()
 	const [showModal, setShowModal] = useState(false)
 	const [freshSheetsSheetId, setFreshSheetsSheetId] = useState()
 
@@ -72,13 +73,27 @@ export function useFreshSheetsRankings() {
 	}, [])
 
 	useEffect(() => {
-		async function fetchRankingsFromIdb() {
-			const rankingsFromIdb = await get('rankings')
-			setRankings(rankingsFromIdb)
+		async function fetchDataFromIdb() {
+			const rankingsFromIdbPromise = get('rankings').then(
+				(rankingsFromIdb) => {
+					setRankings(rankingsFromIdb)
+				}
+			)
+			const positionTotalsFromIdbPromise = get('positionTotals').then(
+				(positionTotalsFromIdb) => {
+					setPositionTotals(positionTotalsFromIdb)
+				}
+			)
+
+			await Promise.all([
+				rankingsFromIdbPromise,
+				positionTotalsFromIdbPromise,
+			])
+
 			setIsLoading(false)
 		}
 
-		fetchRankingsFromIdb()
+		fetchDataFromIdb()
 	}, [])
 
 	function GoogleSheetIdModal() {
@@ -112,7 +127,7 @@ export function useFreshSheetsRankings() {
 						<div className="modal-content">
 							<div className="modal-header">
 								<h5 className="modal-title">
-									Fetch rankings from your Fresh Sheets
+									Fetch rankings from your FreshSheets
 								</h5>
 								<button
 									type="button"
@@ -128,7 +143,7 @@ export function useFreshSheetsRankings() {
 											htmlFor="freshSheetsId"
 											className="form-label"
 										>
-											Fresh Sheets Sheet ID
+											FreshSheets Sheet ID
 										</label>
 										<input
 											className="form-control"
@@ -190,27 +205,50 @@ export function useFreshSheetsRankings() {
 	}
 
 	function authorizeAndFetchRankings(freshSheetsSheetId) {
-		async function fetchGoogleRankings() {
+		async function fetchFreshSheetsData() {
 			try {
-				const response =
-					await gapi.client.sheets.spreadsheets.values.get({
+				const rankingsPromise = gapi.client.sheets.spreadsheets.values
+					.get({
 						spreadsheetId: freshSheetsSheetId,
 						range: 'Rankings!4:403',
 					})
+					.then((response) => {
+						const range = response.result
+						const rankings = range.values.map((values) =>
+							Object.keys(fieldToFreshSheetsColumn).reduce(
+								(ranking, field) => ({
+									...ranking,
+									[field]:
+										values[fieldToFreshSheetsColumn[field]],
+								}),
+								{}
+							)
+						)
 
-				const range = response.result
-				const rankings = range.values.map((values) =>
-					Object.keys(fieldToFreshSheetsColumn).reduce(
-						(ranking, field) => ({
-							...ranking,
-							[field]: values[fieldToFreshSheetsColumn[field]],
-						}),
-						{}
-					)
-				)
+						set('rankings', rankings)
+						setRankings(rankings)
+					})
+				const positionCountPromise =
+					gapi.client.sheets.spreadsheets.values
+						.get({
+							spreadsheetId: freshSheetsSheetId,
+							range: 'League Info!E12:F19',
+						})
+						.then((response) => {
+							const range = response.result
+							const positionTotals = range.values.reduce(
+								(result, positionCount) => ({
+									...result,
+									[positionCount[0]]: positionCount[1],
+								}),
+								{}
+							)
 
-				set('rankings', rankings)
-				setRankings(rankings)
+							set('positionTotals', positionTotals)
+							setPositionTotals(positionTotals)
+						})
+
+				await Promise.all([rankingsPromise, positionCountPromise])
 			} catch (err) {
 				if (err.status === 403) {
 					console.error(err)
@@ -227,7 +265,7 @@ export function useFreshSheetsRankings() {
 				throw response
 			}
 			setAuthorized(true)
-			fetchGoogleRankings()
+			fetchFreshSheetsData()
 		}
 
 		setIsLoading(true)
@@ -252,12 +290,6 @@ export function useFreshSheetsRankings() {
 		}
 	}
 
-	let positions = rankings
-		? rankings.flatMap(({ Pos }) => Pos.split('/'))
-		: []
-	positions = uniq(positions)
-	positions = orderBy(positions)
-
 	return {
 		GoogleSheetIdModal,
 		rankings,
@@ -265,6 +297,6 @@ export function useFreshSheetsRankings() {
 		revoke,
 		authorized,
 		isLoading,
-		positions,
+		positionTotals,
 	}
 }

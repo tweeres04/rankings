@@ -5,6 +5,7 @@ export default function MyTeam({ playersRankingsData, myTeamData }) {
 	const {
 		rankings: playerRankings = [],
 		isLoading: isLoadingPlayerRankings,
+		positionTotals,
 	} = playersRankingsData
 
 	const isLoading = isLoadingPlayerRankings || isLoadingMyTeam
@@ -43,19 +44,10 @@ export default function MyTeam({ playersRankingsData, myTeamData }) {
 			  )
 			: {}
 
-	// Todo: fetch this from Fresh Sheets
-	const positionTotals = {
-		F: 6,
-		C: 2,
-		RW: 2,
-		LW: 2,
-		D: 4,
-		G: 2,
-	}
-
 	return isLoading ? null : playerRankings.length > 0 ? (
 		<>
 			<h5>My team ({myTeamKeys.length})</h5>
+			{myTeamKeys.length < 1 ? <p>No players selected yet</p> : null}
 			<ul>
 				{myTeamKeys.map((k) => {
 					let ranking = playerRankings.find((r) => playerKey(r) === k)
@@ -66,10 +58,7 @@ export default function MyTeam({ playersRankingsData, myTeamData }) {
 					)
 				})}
 			</ul>
-			<h5>Counts</h5>
-			<p className="mb-0" style={{ fontSize: '0.8em' }}>
-				To do: use position counts from fresh sheets
-			</p>
+			<h5>Position Counts</h5>
 			<table className="table">
 				<thead>
 					<tr>
@@ -79,21 +68,26 @@ export default function MyTeam({ playersRankingsData, myTeamData }) {
 					</tr>
 				</thead>
 				<tbody>
-					{Object.keys(positionCounts).map((pos) => (
-						<tr key={pos}>
-							<td>{pos}</td>
-							<td className="text-end">
-								{positionCounts[pos]}/{positionTotals[pos]}
-							</td>
-							<td className="text-end">
-								{(
-									(positionCounts[pos] /
-										positionTotals[pos]) *
-									100
-								).toFixed(1)}
-							</td>
-						</tr>
-					))}
+					{Object.keys(positionCounts)
+						.toSorted()
+						.map((pos) =>
+							positionTotals[pos] > 0 ? (
+								<tr key={pos}>
+									<td>{pos}</td>
+									<td className="text-end">
+										{positionCounts[pos]}/
+										{positionTotals[pos]}
+									</td>
+									<td className="text-end">
+										{(
+											(positionCounts[pos] /
+												positionTotals[pos]) *
+											100
+										).toFixed(1)}
+									</td>
+								</tr>
+							) : null
+						)}
 				</tbody>
 			</table>
 		</>
