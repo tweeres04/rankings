@@ -23,13 +23,13 @@ export default function Drafter() {
 			<div className="container">
 				<h1 className="mb-3">Drafter</h1>
 				<div className="row g-4 align-items-center mb-3">
-					<div className="col">
+					<div className="col-sm">
 						<Filters
 							rankings={rankings}
 							filtersData={filtersData}
 						/>
 					</div>
-					<div className="col-auto">
+					<div className="col-sm-auto">
 						{!isLoadingFreshSheetsRankingsData ? (
 							<button
 								className="btn btn-outline-primary"
@@ -67,6 +67,12 @@ export default function Drafter() {
 					</div>
 				</div>
 			</div>
+			<footer
+				className="bg-light text-center"
+				style={{ padding: '10rem 5rem' }}
+			>
+				By <a href="https://tweeres.ca">Tyler Weeres</a>
+			</footer>
 			<GoogleSheetIdModal />
 		</>
 	)
