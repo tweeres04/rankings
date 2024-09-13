@@ -25,95 +25,97 @@ export default function DatasetTable({
 	return isLoading ? (
 		<LoadingSpinner />
 	) : rankings ? (
-		<table className="table">
-			<thead>
-				<tr>
-					{headers.map((key) => {
-						const cellClass = clsx({
-							'text-end': key === 'Points',
+		<div class="table-responsive" style={{ height: '120dvh' }}>
+			<table className="table">
+				<thead className="sticky-top bg-white">
+					<tr>
+						{headers.map((key) => {
+							const cellClass = clsx({
+								'text-end': key === 'Points',
+							})
+							return (
+								<th key={key} className={cellClass}>
+									{key}
+								</th>
+							)
+						})}
+						<th style={{ width: 150 }}></th>
+					</tr>
+				</thead>
+				<tbody>
+					{rankings.map((ranking) => {
+						const key = playerKey(ranking)
+						let isFilteredOut =
+							(filters.position &&
+								ranking.Pos !== filters.position &&
+								!ranking.Pos.split('/').includes(
+									filters.position
+								)) ||
+							(filters.crossedOff &&
+								filters.crossedOff === 'crossedOff' &&
+								!crossedOff[key] &&
+								!myTeam[key]) ||
+							(filters.crossedOff === 'notCrossedOff' &&
+								(crossedOff[key] || myTeam[key]))
+						const isCrossedOff = crossedOff[key]
+						const isOnMyTeam = myTeam[key]
+						const rowClass = clsx({
+							'table-secondary': isCrossedOff || isOnMyTeam,
+							'd-none': isFilteredOut,
 						})
 						return (
-							<th key={key} className={cellClass}>
-								{key}
-							</th>
+							<tr key={key} className={rowClass}>
+								{headers.map((header) => {
+									const cellClass = clsx({
+										'text-end': header === 'Points',
+									})
+									return (
+										<td key={header} className={cellClass}>
+											{isCrossedOff || isOnMyTeam ? (
+												<s>{ranking[header]}</s>
+											) : (
+												ranking[header]
+											)}
+										</td>
+									)
+								})}
+								<td
+									className="text-end"
+									style={{ minWidth: '20rem' }}
+								>
+									<button
+										className="btn btn-primary btn-sm"
+										onClick={() => {
+											toggleMyTeam(ranking)
+											if (isCrossedOff) {
+												toggleCrossedOff(ranking)
+											}
+										}}
+									>
+										{isOnMyTeam
+											? 'Remove from my team'
+											: 'Add to my team'}
+									</button>{' '}
+									<button
+										className="btn btn-secondary btn-sm"
+										onClick={() => {
+											toggleCrossedOff(ranking)
+											if (isOnMyTeam) {
+												toggleMyTeam(ranking)
+											}
+										}}
+									>
+										{isCrossedOff
+											? 'Un cross off'
+											: 'Cross off'}
+									</button>
+								</td>
+							</tr>
 						)
 					})}
-					<th style={{ width: 150 }}></th>
-				</tr>
-			</thead>
-			<tbody>
-				{rankings.map((ranking) => {
-					const key = playerKey(ranking)
-					let isFilteredOut =
-						(filters.position &&
-							ranking.Pos !== filters.position &&
-							!ranking.Pos.split('/').includes(
-								filters.position
-							)) ||
-						(filters.crossedOff &&
-							filters.crossedOff === 'crossedOff' &&
-							!crossedOff[key] &&
-							!myTeam[key]) ||
-						(filters.crossedOff === 'notCrossedOff' &&
-							(crossedOff[key] || myTeam[key]))
-					const isCrossedOff = crossedOff[key]
-					const isOnMyTeam = myTeam[key]
-					const rowClass = clsx({
-						'table-secondary': isCrossedOff || isOnMyTeam,
-						'd-none': isFilteredOut,
-					})
-					return (
-						<tr key={key} className={rowClass}>
-							{headers.map((header) => {
-								const cellClass = clsx({
-									'text-end': header === 'Points',
-								})
-								return (
-									<td key={header} className={cellClass}>
-										{isCrossedOff || isOnMyTeam ? (
-											<s>{ranking[header]}</s>
-										) : (
-											ranking[header]
-										)}
-									</td>
-								)
-							})}
-							<td
-								className="text-end"
-								style={{ minWidth: '20rem' }}
-							>
-								<button
-									className="btn btn-primary btn-sm"
-									onClick={() => {
-										toggleMyTeam(ranking)
-										if (isCrossedOff) {
-											toggleCrossedOff(ranking)
-										}
-									}}
-								>
-									{isOnMyTeam
-										? 'Remove from my team'
-										: 'Add to my team'}
-								</button>{' '}
-								<button
-									className="btn btn-secondary btn-sm"
-									onClick={() => {
-										toggleCrossedOff(ranking)
-										if (isOnMyTeam) {
-											toggleMyTeam(ranking)
-										}
-									}}
-								>
-									{isCrossedOff
-										? 'Un cross off'
-										: 'Cross off'}
-								</button>
-							</td>
-						</tr>
-					)
-				})}
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	) : null
 }
 
