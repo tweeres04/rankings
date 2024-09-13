@@ -23,13 +23,13 @@ export default function Drafter() {
 			<div className="container">
 				<h1 className="mb-3">Drafter</h1>
 				<div className="row g-4 align-items-center mb-3">
-					<div className="col-sm">
+					<div className="col-md">
 						<Filters
 							rankings={rankings}
 							filtersData={filtersData}
 						/>
 					</div>
-					<div className="col-sm-auto">
+					<div className="col-md-auto">
 						{!isLoadingFreshSheetsRankingsData ? (
 							<button
 								className="btn btn-outline-primary"

@@ -11,7 +11,7 @@ export default function Filters({ rankings, filtersData }) {
 
 	return (
 		<div className="row g-4 align-items-center">
-			<div className="col-auto">
+			<div className="col">
 				<select
 					name="Position"
 					id="position"
@@ -29,7 +29,7 @@ export default function Filters({ rankings, filtersData }) {
 					))}
 				</select>
 			</div>
-			<div className="col-auto">
+			<div className="col">
 				<select
 					name="crossedOff"
 					id="crossedOff"
