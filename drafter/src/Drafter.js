@@ -51,7 +51,7 @@ export default function Drafter() {
 					</div>
 				</div>
 				<div className="row">
-					<div className="col-9">
+					<div className="col col-md-9 order-last order-md-first">
 						<DatasetTable
 							rankingsData={freshSheetsRankingsData}
 							crossedOffData={crossedOffData}
@@ -59,7 +59,7 @@ export default function Drafter() {
 							filtersData={filtersData}
 						/>
 					</div>
-					<div className="col">
+					<div className="col order-first order-md-last">
 						<MyTeam
 							playersRankingsData={freshSheetsRankingsData}
 							myTeamData={myTeamData}
