@@ -1,7 +1,6 @@
 /* global gapi, google */
 import { useState, useEffect } from 'react'
 import { get, set } from 'idb-keyval'
-import { uniq, orderBy } from 'lodash'
 
 function useGoogleScripts() {
 	const [tokenClient, setTokenClient] = useState()
@@ -20,7 +19,7 @@ function useGoogleScripts() {
 	function gisLoaded() {
 		const tokenClient = google.accounts.oauth2.initTokenClient({
 			client_id: process.env.REACT_APP_GOOGLE_OAUTH_CLIENT_ID,
-			scope: 'https://www.googleapis.com/auth/spreadsheets',
+			scope: 'https://www.googleapis.com/auth/spreadsheets.readonly',
 		})
 
 		setTokenClient(tokenClient)
