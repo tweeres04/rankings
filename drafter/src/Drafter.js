@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useFreshSheetsRankings } from './useFreshSheetsRankings'
 import DatasetTable from './DatasetTable'
 import MyTeam from './MyTeam'
@@ -6,7 +7,18 @@ import Filters from './Drafter/Filters'
 import useFilters from './Drafter/useFilters'
 import Footer from './Footer'
 
+function useNoIndex() {
+	useEffect(() => {
+		const noIndexTag = document.createElement('meta')
+		noIndexTag.name = 'robots'
+		noIndexTag.content = 'noindex'
+		document.head.appendChild(noIndexTag)
+	}, [])
+}
+
 export default function Drafter() {
+	useNoIndex()
+
 	const crossedOffData = useCrossedOff('crossedOff')
 	const myTeamData = useCrossedOff('myTeam')
 
