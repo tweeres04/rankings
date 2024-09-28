@@ -4,6 +4,7 @@ import MyTeam from './MyTeam'
 import useCrossedOff from './Drafter/useCrossedOff'
 import Filters from './Drafter/Filters'
 import useFilters from './Drafter/useFilters'
+import Footer from './Footer'
 
 export default function Drafter() {
 	const crossedOffData = useCrossedOff('crossedOff')
@@ -67,19 +68,7 @@ export default function Drafter() {
 					</div>
 				</div>
 			</div>
-			<footer
-				className="bg-light text-center"
-				style={{ padding: '10rem 5rem' }}
-			>
-				<div>
-					By <a href="https://tweeres.ca">Tyler Weeres</a>
-				</div>
-				<div>
-					<a href="/privacy-policy" style={{ fontSize: '0.75rem' }}>
-						Privacy Policy
-					</a>
-				</div>
-			</footer>
+			<Footer />
 			<GoogleSheetIdModal />
 		</>
 	)
