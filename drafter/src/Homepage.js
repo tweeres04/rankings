@@ -4,7 +4,15 @@ export default function Homepage() {
 	return (
 		<>
 			<div className="container">
-				<div className="row" style={{ margin: '10rem 0' }}>
+				<div className="row">
+					<div className="col">
+						<h1>Drafter</h1>
+					</div>
+				</div>
+				<div
+					className="row"
+					style={{ marginTop: '10rem', marginBottom: '10rem' }}
+				>
 					<div className="col-lg">
 						<h1>Make your fantasy hockey draft easy</h1>
 						<p>
