@@ -2,6 +2,7 @@ import clsx from 'clsx'
 
 import playerKey from './playerKey'
 
+// todo: only show points if it's a points league
 const headers = ['Rank', 'Name', 'Team', 'Pos', 'Points', 'VORP']
 
 export default function DatasetTable({
@@ -56,7 +57,12 @@ export default function DatasetTable({
 								!crossedOff[key] &&
 								!myTeam[key]) ||
 							(filters.crossedOff === 'notCrossedOff' &&
-								(crossedOff[key] || myTeam[key]))
+								(crossedOff[key] || myTeam[key])) ||
+							(filters.search &&
+								filters.search !== '' &&
+								!ranking.Name.toLowerCase().includes(
+									filters.search.toLowerCase()
+								))
 						const isCrossedOff = crossedOff[key]
 						const isOnMyTeam = myTeam[key]
 						const rowClass = clsx({
