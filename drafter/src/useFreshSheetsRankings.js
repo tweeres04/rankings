@@ -46,11 +46,11 @@ function useGoogleScripts() {
 
 const fieldToFreshSheetsColumn = {
 	Rank: 0,
-	Name: 1,
-	Team: 4,
-	Pos: 5,
-	Points: 10,
-	VORP: 11,
+	Name: 3,
+	Team: 7,
+	Pos: 8,
+	Points: 22,
+	VORP: 14,
 }
 
 export function useFreshSheetsRankings() {
