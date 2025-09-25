@@ -53,7 +53,7 @@ export default function Drafter() {
 							filtersData={filtersData}
 						/>
 					</div>
-					<div className="col-md-auto">
+					<div className="col-md-3 d-flex flex-column gap-1">
 						{!isLoadingFreshSheetsRankingsData ? (
 							<button
 								className="btn btn-outline-primary"
