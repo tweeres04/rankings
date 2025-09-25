@@ -105,7 +105,9 @@ export default function Filters({ rankings, filtersData }) {
 						onClick={() => {
 							setFilter(
 								'view',
-								filters.view === 'grouped' ? 'list' : 'grouped'
+								!filters.view || filters.view === 'grouped'
+									? 'list'
+									: 'grouped'
 							)
 						}}
 					>
