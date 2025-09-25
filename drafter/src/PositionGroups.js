@@ -18,7 +18,7 @@ export default function PositionGroups({
 	filtersData,
 }) {
 	const [showTopTen, setShowTopTen] = useState(false)
-	const { isFilteredOut } = filtersData
+	const { isFilteredOut, filters } = filtersData
 	const { rankings } = rankingsData
 	const { crossedOff, toggleCrossedOff } = crossedOffData
 	const { crossedOff: myTeam, toggleCrossedOff: toggleMyTeam } = myTeamData
@@ -81,101 +81,108 @@ export default function PositionGroups({
 																	VORP:{' '}
 																	{r.VORP}
 																</div>
-																<div>
-																	Compared to:
-																</div>
-																<table className="ms-2">
-																	<tr>
-																		<td>
-																			2nd:
-																		</td>
-																		<td>
-																			{differenceFrom(
-																				1
-																			) >
-																			0
-																				? '+'
-																				: ''}
-																			{differenceFrom(
-																				1
-																			).toFixed(
-																				1
-																			)}
-																		</td>
-																	</tr>
-																	<tr>
-																		<td>
-																			5th:
-																		</td>
-																		<td>
-																			{differenceFrom(
-																				4
-																			) >
-																			0
-																				? '+'
-																				: ''}
-																			{differenceFrom(
-																				4
-																			).toFixed(
-																				1
-																			)}
-																		</td>
-																	</tr>
-																	<tr>
-																		<td>
-																			10th:
-																		</td>
-																		<td>
-																			{differenceFrom(
-																				9
-																			) >
-																			0
-																				? '+'
-																				: ''}
-																			{differenceFrom(
-																				9
-																			).toFixed(
-																				1
-																			)}
-																		</td>
-																	</tr>
-																	<tr>
-																		<td>
-																			20th:
-																		</td>
-																		<td>
-																			{differenceFrom(
-																				19
-																			) >
-																			0
-																				? '+'
-																				: ''}
-																			{differenceFrom(
-																				19
-																			).toFixed(
-																				1
-																			)}
-																		</td>
-																	</tr>
-																	<tr>
-																		<td>
-																			50th:
-																		</td>
-																		<td>
-																			{differenceFrom(
-																				49
-																			) >
-																			0
-																				? '+'
-																				: ''}
-																			{differenceFrom(
-																				49
-																			).toFixed(
-																				1
-																			)}
-																		</td>
-																	</tr>
-																</table>
+																{filters.search
+																	?.length >
+																0 ? null : (
+																	<>
+																		<div>
+																			Compared
+																			to:
+																		</div>
+																		<table className="ms-2">
+																			<tr>
+																				<td>
+																					2nd:
+																				</td>
+																				<td>
+																					{differenceFrom(
+																						1
+																					) >
+																					0
+																						? '+'
+																						: ''}
+																					{differenceFrom(
+																						1
+																					).toFixed(
+																						1
+																					)}
+																				</td>
+																			</tr>
+																			<tr>
+																				<td>
+																					5th:
+																				</td>
+																				<td>
+																					{differenceFrom(
+																						4
+																					) >
+																					0
+																						? '+'
+																						: ''}
+																					{differenceFrom(
+																						4
+																					).toFixed(
+																						1
+																					)}
+																				</td>
+																			</tr>
+																			<tr>
+																				<td>
+																					10th:
+																				</td>
+																				<td>
+																					{differenceFrom(
+																						9
+																					) >
+																					0
+																						? '+'
+																						: ''}
+																					{differenceFrom(
+																						9
+																					).toFixed(
+																						1
+																					)}
+																				</td>
+																			</tr>
+																			<tr>
+																				<td>
+																					20th:
+																				</td>
+																				<td>
+																					{differenceFrom(
+																						19
+																					) >
+																					0
+																						? '+'
+																						: ''}
+																					{differenceFrom(
+																						19
+																					).toFixed(
+																						1
+																					)}
+																				</td>
+																			</tr>
+																			<tr>
+																				<td>
+																					50th:
+																				</td>
+																				<td>
+																					{differenceFrom(
+																						49
+																					) >
+																					0
+																						? '+'
+																						: ''}
+																					{differenceFrom(
+																						49
+																					).toFixed(
+																						1
+																					)}
+																				</td>
+																			</tr>
+																		</table>
+																	</>
+																)}
 															</>
 														)
 														return isCrossedOff ||
