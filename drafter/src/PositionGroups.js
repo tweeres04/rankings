@@ -45,12 +45,9 @@ export default function PositionGroups({
 				{Object.keys(groupedRankings)
 					.toSorted((a, b) => a.localeCompare(b))
 					.map((pos) => {
-						const topTen = groupedRankings[pos]
-							.filter((r) => r)
-							.slice(0, 10)
 						const rankingsToShow = showTopTen
-							? topTen
-							: topTen.slice(0, 1)
+							? groupedRankings[pos].slice(0, 10)
+							: groupedRankings[pos].slice(0, 1)
 						return (
 							<div className="col-sm-4 mb-3">
 								<h2 className="mb-0 fs-4">{pos}</h2>
@@ -59,12 +56,9 @@ export default function PositionGroups({
 										const key = playerKey(r)
 										const isCrossedOff = crossedOff[key]
 										const isOnMyTeam = myTeam[key]
-										const differenceFromTwo =
-											r.VORP - topTen[1].VORP
-										const differenceFromFive =
-											r.VORP - topTen[4].VORP
-										const differenceFromTen =
-											r.VORP - topTen[9].VORP
+										const differenceFrom = (rank) =>
+											r.VORP -
+											groupedRankings[pos][rank].VORP
 										return (
 											<li
 												key={r.Name}
@@ -90,17 +84,21 @@ export default function PositionGroups({
 																<div>
 																	Compared to:
 																</div>
-																<table>
+																<table className="ms-2">
 																	<tr>
 																		<td>
 																			2nd:
 																		</td>
 																		<td>
-																			{differenceFromTwo >
+																			{differenceFrom(
+																				1
+																			) >
 																			0
 																				? '+'
 																				: ''}
-																			{differenceFromTwo.toFixed(
+																			{differenceFrom(
+																				1
+																			).toFixed(
 																				1
 																			)}
 																		</td>
@@ -110,11 +108,15 @@ export default function PositionGroups({
 																			5th:
 																		</td>
 																		<td>
-																			{differenceFromFive >
+																			{differenceFrom(
+																				4
+																			) >
 																			0
 																				? '+'
 																				: ''}
-																			{differenceFromFive.toFixed(
+																			{differenceFrom(
+																				4
+																			).toFixed(
 																				1
 																			)}
 																		</td>
@@ -124,11 +126,51 @@ export default function PositionGroups({
 																			10th:
 																		</td>
 																		<td>
-																			{differenceFromTen >
+																			{differenceFrom(
+																				9
+																			) >
 																			0
 																				? '+'
 																				: ''}
-																			{differenceFromTen.toFixed(
+																			{differenceFrom(
+																				9
+																			).toFixed(
+																				1
+																			)}
+																		</td>
+																	</tr>
+																	<tr>
+																		<td>
+																			20th:
+																		</td>
+																		<td>
+																			{differenceFrom(
+																				19
+																			) >
+																			0
+																				? '+'
+																				: ''}
+																			{differenceFrom(
+																				19
+																			).toFixed(
+																				1
+																			)}
+																		</td>
+																	</tr>
+																	<tr>
+																		<td>
+																			50th:
+																		</td>
+																		<td>
+																			{differenceFrom(
+																				49
+																			) >
+																			0
+																				? '+'
+																				: ''}
+																			{differenceFrom(
+																				49
+																			).toFixed(
 																				1
 																			)}
 																		</td>
