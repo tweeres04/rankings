@@ -70,7 +70,7 @@ export default function Drafter() {
 								myTeamData.clearCrossedOff()
 							}}
 						>
-							Reset Drafter
+							Clear crossed off/my team
 						</button>
 					</div>
 				</div>
