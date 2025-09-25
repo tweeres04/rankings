@@ -75,7 +75,7 @@ export default function Drafter() {
 					</div>
 				</div>
 				<div className="row">
-					<div className="col col-md-9 order-last order-md-first">
+					<div className="col-md-9 order-last order-md-first">
 						{isLoading ? (
 							<LoadingSpinner />
 						) : filtersData.filters.view === 'list' ? (
@@ -94,7 +94,7 @@ export default function Drafter() {
 							/>
 						)}
 					</div>
-					<div className="col order-first order-md-last">
+					<div className="col-md-3 order-first order-md-last">
 						<MyTeam
 							playersRankingsData={freshSheetsRankingsData}
 							myTeamData={myTeamData}
