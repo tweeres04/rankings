@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useFreshSheetsRankings } from './useFreshSheetsRankings'
 import DatasetTable from './DatasetTable'
+import PositionGroups from './PositionGroups'
 import MyTeam from './MyTeam'
 import useCrossedOff from './Drafter/useCrossedOff'
 import Filters from './Drafter/Filters'
@@ -30,6 +31,16 @@ export default function Drafter() {
 		GoogleSheetIdModal,
 	} = freshSheetsRankingsData
 	const filtersData = useFilters()
+
+	const { isLoading: isLoadingCrossedOff } = crossedOffData
+	const { isLoading: isLoadingMyTeam } = myTeamData
+	const { isLoading: isLoadingFilters } = filtersData
+
+	const isLoading =
+		isLoadingFreshSheetsRankingsData ||
+		isLoadingCrossedOff ||
+		isLoadingFilters ||
+		isLoadingMyTeam
 
 	return (
 		<>
@@ -65,12 +76,23 @@ export default function Drafter() {
 				</div>
 				<div className="row">
 					<div className="col col-md-9 order-last order-md-first">
-						<DatasetTable
-							rankingsData={freshSheetsRankingsData}
-							crossedOffData={crossedOffData}
-							myTeamData={myTeamData}
-							filtersData={filtersData}
-						/>
+						{isLoading ? (
+							<LoadingSpinner />
+						) : filtersData.filters.view === 'list' ? (
+							<DatasetTable
+								rankingsData={freshSheetsRankingsData}
+								crossedOffData={crossedOffData}
+								myTeamData={myTeamData}
+								filtersData={filtersData}
+							/>
+						) : (
+							<PositionGroups
+								rankingsData={freshSheetsRankingsData}
+								crossedOffData={crossedOffData}
+								myTeamData={myTeamData}
+								filtersData={filtersData}
+							/>
+						)}
 					</div>
 					<div className="col order-first order-md-last">
 						<MyTeam
@@ -83,5 +105,13 @@ export default function Drafter() {
 			<Footer />
 			<GoogleSheetIdModal />
 		</>
+	)
+}
+
+function LoadingSpinner() {
+	return (
+		<div className="d-flex justify-content-center mt-5">
+			<div className="spinner-border"></div>
+		</div>
 	)
 }

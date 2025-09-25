@@ -99,6 +99,19 @@ export default function Filters({ rankings, filtersData }) {
 						Clear search
 					</button>
 				</div>
+				<div class="col-auto">
+					<button
+						className="btn btn-outline-secondary"
+						onClick={() => {
+							setFilter(
+								'view',
+								filters.view === 'grouped' ? 'list' : 'grouped'
+							)
+						}}
+					>
+						{filters.view === 'list' ? 'List' : 'Grouped'}
+					</button>
+				</div>
 			</div>
 		</>
 	)
