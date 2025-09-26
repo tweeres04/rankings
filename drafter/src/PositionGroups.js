@@ -11,6 +11,21 @@ function groupRankings(rankings) {
 	return groupBy(flattenedPlayers, 'splitPos')
 }
 
+function DifferenceRow({ differenceFrom, label, n }) {
+	return (
+		<tr>
+			<td>{label}:</td>
+			<td>
+				{differenceFrom(n)
+					? `${differenceFrom(n) > 0 ? '+' : ''}${differenceFrom(
+							n
+					  ).toFixed(1)}`
+					: 'N/A'}
+			</td>
+		</tr>
+	)
+}
+
 export default function PositionGroups({
 	rankingsData,
 	crossedOffData,
@@ -57,8 +72,11 @@ export default function PositionGroups({
 										const isCrossedOff = crossedOff[key]
 										const isOnMyTeam = myTeam[key]
 										const differenceFrom = (rank) =>
-											r.VORP -
-											groupedRankings[pos][rank].VORP
+											groupedRankings[pos][rank]
+												? r.VORP -
+												  groupedRankings[pos][rank]
+														.VORP
+												: null
 										return (
 											<li
 												key={r.Name}
@@ -90,96 +108,41 @@ export default function PositionGroups({
 																			to:
 																		</div>
 																		<table className="ms-2">
-																			<tr>
-																				<td>
-																					2nd:
-																				</td>
-																				<td>
-																					{differenceFrom(
-																						1
-																					) >
-																					0
-																						? '+'
-																						: ''}
-																					{differenceFrom(
-																						1
-																					).toFixed(
-																						1
-																					)}
-																				</td>
-																			</tr>
-																			<tr>
-																				<td>
-																					5th:
-																				</td>
-																				<td>
-																					{differenceFrom(
-																						4
-																					) >
-																					0
-																						? '+'
-																						: ''}
-																					{differenceFrom(
-																						4
-																					).toFixed(
-																						1
-																					)}
-																				</td>
-																			</tr>
-																			<tr>
-																				<td>
-																					10th:
-																				</td>
-																				<td>
-																					{differenceFrom(
-																						9
-																					) >
-																					0
-																						? '+'
-																						: ''}
-																					{differenceFrom(
-																						9
-																					).toFixed(
-																						1
-																					)}
-																				</td>
-																			</tr>
-																			<tr>
-																				<td>
-																					20th:
-																				</td>
-																				<td>
-																					{differenceFrom(
-																						19
-																					) >
-																					0
-																						? '+'
-																						: ''}
-																					{differenceFrom(
-																						19
-																					).toFixed(
-																						1
-																					)}
-																				</td>
-																			</tr>
-																			<tr>
-																				<td>
-																					50th:
-																				</td>
-																				<td>
-																					{differenceFrom(
-																						49
-																					) >
-																					0
-																						? '+'
-																						: ''}
-																					{differenceFrom(
-																						49
-																					).toFixed(
-																						1
-																					)}
-																				</td>
-																			</tr>
+																			<DifferenceRow
+																				{...{
+																					differenceFrom,
+																					label: '2nd',
+																					n: 1,
+																				}}
+																			/>
+																			<DifferenceRow
+																				{...{
+																					differenceFrom,
+																					label: '5th',
+																					n: 4,
+																				}}
+																			/>
+																			<DifferenceRow
+																				{...{
+																					differenceFrom,
+																					label: '10th',
+																					n: 9,
+																				}}
+																			/>
+																			<DifferenceRow
+																				{...{
+																					differenceFrom,
+																					label: '20th',
+																					n: 19,
+																				}}
+																			/>
+																			<DifferenceRow
+																				{...{
+																					differenceFrom,
+																					label: '50th',
+																					n: 49,
+																				}}
+																			/>
 																		</table>
 																	</>
 																)}
