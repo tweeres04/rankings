@@ -4,6 +4,15 @@ import Homepage from './Homepage'
 import Drafter from './Drafter'
 import reportWebVitals from './reportWebVitals'
 import PrivacyPolicy from './PrivacyPolicy'
+import mixpanel from 'mixpanel-browser'
+
+mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN, {
+	debug: process.env.NODE_ENV !== 'production',
+	track_pageview: true,
+	persistence: 'localStorage',
+	record_sessions_percent: 1, //records 1% of all sessions
+	record_heatmap_data: true,
+})
 
 const container = document.getElementById('root')
 const root = createRoot(container)
