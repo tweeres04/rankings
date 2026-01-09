@@ -1,70 +1,64 @@
 import playerKey from './playerKey'
 
-export default function MyTeam({
-	playersRankingsData,
-	goaliesRankingsData,
-	myTeamData,
-}) {
+export default function MyTeam({ playersRankingsData, myTeamData }) {
 	const { crossedOff: myTeam, isLoading: isLoadingMyTeam } = myTeamData
-	const { rankings: playerRankings, isLoading: isLoadingPlayerRankings } =
-		playersRankingsData
-	const { rankings: goalieRankings, isLoading: isLoadingGoalieRankings } =
-		goaliesRankingsData
+	const {
+		rankings: playerRankings = [],
+		isLoading: isLoadingPlayerRankings,
+		positionTotals,
+	} = playersRankingsData
 
-	const isLoading =
-		isLoadingGoalieRankings || isLoadingPlayerRankings || isLoadingMyTeam
+	const isLoading = isLoadingPlayerRankings || isLoadingMyTeam
+
+	const myTeamKeys = Object.keys(myTeam).filter((key) => myTeam[key])
 
 	const positionCounts =
-		playerRankings && goalieRankings
-			? Object.keys(myTeam).reduce((counts, key) => {
-					let ranking = playerRankings.find(
-						(r) => playerKey(r) === key
-					)
-					if (!ranking) {
-						ranking = goalieRankings.find(
+		playerRankings.length > 0
+			? myTeamKeys.reduce(
+					(counts, key) => {
+						let ranking = playerRankings.find(
 							(r) => playerKey(r) === key
 						)
-					}
 
-					const positions = ranking.Pos.split(',')
-
-					positions.forEach((pos) => {
-						if (counts[pos]) {
-							counts[pos] = counts[pos] + 1
-						} else {
-							counts[pos] = 1
+						if (!ranking) {
+							return counts
 						}
-					})
 
-					return counts
-			  }, {})
+						const positions = ranking.Pos.split('/')
+
+						const isForward = positions.some((p) =>
+							['C', 'LW', 'RW'].some((p_) => p === p_)
+						)
+
+						if (isForward) {
+							counts['F'] = counts['F'] + 1
+						}
+
+						positions.forEach((pos) => {
+							counts[pos] = counts[pos] + 1
+						})
+
+						return counts
+					},
+					{ F: 0, D: 0, G: 0, C: 0, RW: 0, LW: 0 }
+			  )
 			: {}
 
-	const positionTotals = {
-		C: 3,
-		RW: 3,
-		LW: 3,
-		D: 4,
-		G: 2,
-	}
-
-	return isLoading ? null : (
+	return isLoading ? null : playerRankings.length > 0 ? (
 		<>
-			<h5>My team ({Object.keys(myTeam).length})</h5>
+			<h5>My team ({myTeamKeys.length})</h5>
+			{myTeamKeys.length < 1 ? <p>No players selected yet</p> : null}
 			<ul>
-				{Object.keys(myTeam).map((k) => {
+				{myTeamKeys.map((k) => {
 					let ranking = playerRankings.find((r) => playerKey(r) === k)
-					if (!ranking) {
-						ranking = goalieRankings.find((r) => playerKey(r) === k)
-					}
 					return (
 						<li key={k}>
-							{ranking.Player} - {ranking.Pos}
+							{ranking.Name} - {ranking.Pos}
 						</li>
 					)
 				})}
 			</ul>
-			<h5>Counts</h5>
+			<h5>Position Counts</h5>
 			<table className="table">
 				<thead>
 					<tr>
@@ -74,21 +68,28 @@ export default function MyTeam({
 					</tr>
 				</thead>
 				<tbody>
-					{Object.keys(positionCounts).map((pos) => (
-						<tr key={pos}>
-							<td>{pos}</td>
-							<td className="text-end">{positionCounts[pos]}</td>
-							<td className="text-end">
-								{(
-									(positionCounts[pos] /
-										positionTotals[pos]) *
-									100
-								).toFixed(1)}
-							</td>
-						</tr>
-					))}
+					{Object.keys(positionCounts)
+						.toSorted()
+						.map((pos) =>
+							positionTotals[pos] > 0 ? (
+								<tr key={pos}>
+									<td>{pos}</td>
+									<td className="text-end">
+										{positionCounts[pos]}/
+										{positionTotals[pos]}
+									</td>
+									<td className="text-end">
+										{(
+											(positionCounts[pos] /
+												positionTotals[pos]) *
+											100
+										).toFixed(1)}
+									</td>
+								</tr>
+							) : null
+						)}
 				</tbody>
 			</table>
 		</>
-	)
+	) : null
 }

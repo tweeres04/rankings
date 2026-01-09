@@ -1,98 +1,117 @@
-import { useState, useEffect } from 'react'
-import clsx from 'clsx'
-import { get, set } from 'idb-keyval'
-
+import { useEffect } from 'react'
+import { useFreshSheetsRankings } from './useFreshSheetsRankings'
 import DatasetTable from './DatasetTable'
+import PositionGroups from './PositionGroups'
 import MyTeam from './MyTeam'
 import useCrossedOff from './Drafter/useCrossedOff'
 import Filters from './Drafter/Filters'
 import useFilters from './Drafter/useFilters'
-import useRankings from './Drafter/useRankings'
+import Footer from './Footer'
 
-function useDataset() {
-	const [dataset, setDataset] = useState()
-	const [loading, setLoading] = useState(true)
-
+function useNoIndex() {
 	useEffect(() => {
-		async function getDataset() {
-			const dataset = await get('dataset')
-			setDataset(dataset ?? 'players')
-			setLoading(false)
-		}
-		getDataset()
+		const noIndexTag = document.createElement('meta')
+		noIndexTag.name = 'robots'
+		noIndexTag.content = 'noindex'
+		document.head.appendChild(noIndexTag)
 	}, [])
-
-	useEffect(() => {
-		set('dataset', dataset)
-	}, [dataset])
-
-	return { dataset, setDataset, loading }
 }
 
 export default function Drafter() {
+	useNoIndex()
+
 	const crossedOffData = useCrossedOff('crossedOff')
 	const myTeamData = useCrossedOff('myTeam')
-	const { dataset, setDataset } = useDataset()
-	const playersRankingsData = useRankings('players')
-	const goaliesRankingsData = useRankings('goalies')
-	const activeRankingsData =
-		dataset === 'players'
-			? playersRankingsData
-			: dataset === 'goalies'
-			? goaliesRankingsData
-			: {}
+
+	const freshSheetsRankingsData = useFreshSheetsRankings()
+	const {
+		rankings,
+		startAuthorizeAndRefreshRankings,
+		isLoading: isLoadingFreshSheetsRankingsData,
+		GoogleSheetIdModal,
+	} = freshSheetsRankingsData
 	const filtersData = useFilters()
+
+	const { isLoading: isLoadingCrossedOff } = crossedOffData
+	const { isLoading: isLoadingMyTeam } = myTeamData
+	const { isLoading: isLoadingFilters } = filtersData
+
+	const isLoading =
+		isLoadingFreshSheetsRankingsData ||
+		isLoadingCrossedOff ||
+		isLoadingFilters ||
+		isLoadingMyTeam
+
 	return (
 		<>
 			<div className="container">
 				<h1 className="mb-3">Drafter</h1>
-				<ul className="nav nav-tabs mb-3">
-					<li className="nav-item">
-						<button
-							className={clsx('nav-link', {
-								active: dataset === 'players',
-							})}
-							onClick={() => setDataset('players')}
-						>
-							Players
-						</button>
-					</li>
-					<li className="nav-item">
-						<button
-							className={clsx('nav-link', {
-								active: dataset === 'goalies',
-							})}
-							onClick={() => setDataset('goalies')}
-						>
-							Goalies
-						</button>
-					</li>
-				</ul>
-				<Filters
-					filtersData={filtersData}
-					positions={activeRankingsData.positions}
-					clearCrossedOff={crossedOffData.clearCrossedOff}
-					clearMyTeam={myTeamData.clearCrossedOff}
-				/>
-				<div className="row">
-					<div className="col-9">
-						<DatasetTable
-							rankingsData={activeRankingsData}
-							dataset={dataset}
-							crossedOffData={crossedOffData}
-							myTeamData={myTeamData}
+				<div className="row g-4 align-items-center mb-3">
+					<div className="col-md">
+						<Filters
+							rankings={rankings}
 							filtersData={filtersData}
 						/>
 					</div>
-					<div className="col">
+					<div className="col-md-3 d-flex flex-column gap-1">
+						{!isLoadingFreshSheetsRankingsData ? (
+							<button
+								className="btn btn-outline-primary"
+								onClick={startAuthorizeAndRefreshRankings}
+							>
+								{rankings ? <>Refresh</> : <>Fetch</>} data from
+								FreshSheets
+							</button>
+						) : null}{' '}
+						<button
+							className="btn btn-outline-danger"
+							onClick={() => {
+								crossedOffData.clearCrossedOff()
+								myTeamData.clearCrossedOff()
+							}}
+						>
+							Clear crossed off/my team
+						</button>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-md-9 order-last order-md-first">
+						{isLoading ? (
+							<LoadingSpinner />
+						) : filtersData.filters.view === 'list' ? (
+							<DatasetTable
+								rankingsData={freshSheetsRankingsData}
+								crossedOffData={crossedOffData}
+								myTeamData={myTeamData}
+								filtersData={filtersData}
+							/>
+						) : (
+							<PositionGroups
+								rankingsData={freshSheetsRankingsData}
+								crossedOffData={crossedOffData}
+								myTeamData={myTeamData}
+								filtersData={filtersData}
+							/>
+						)}
+					</div>
+					<div className="col-md-3 order-first order-md-last">
 						<MyTeam
-							playersRankingsData={playersRankingsData}
-							goaliesRankingsData={goaliesRankingsData}
+							playersRankingsData={freshSheetsRankingsData}
 							myTeamData={myTeamData}
 						/>
 					</div>
 				</div>
 			</div>
+			<Footer />
+			<GoogleSheetIdModal />
 		</>
+	)
+}
+
+function LoadingSpinner() {
+	return (
+		<div className="d-flex justify-content-center mt-5">
+			<div className="spinner-border"></div>
+		</div>
 	)
 }
